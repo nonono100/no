@@ -1,1 +1,58 @@
 
+--notify Ghost GUI // Welcome! Any settings changed will be saved. Use the toggle key if you want to access settings afterwards.
+local Library           = loadstring(game:HttpGet("https://raw.githubusercontent.com/mkswlorn/My-Repo/main/UI"))();
+local Notification = loadstring(game:HttpGet("https://raw.githubusercontent.com/nonono100/no/main/NotifyUI"))()
+
+if not isfolder("GhostSettings") then
+    makefolder("GhostSettings")
+end
+
+
+
+local MainWindow        = Library:CreateWindow("Settings");
+
+do
+MainWindow:AddBind({text = "Settings KeyBind", flag = "bind", key = "F1", callback = function() 
+    Library:Close()
+    end}) 
+end
+
+do
+MainWindow:AddSlider({text = "SilentFOV", flag = "slider", value = 40, min = 20, max = 80, float = 0.3, callback = function(a) 
+--changes will apply next game (notify)
+
+end})
+end
+
+do
+MainWindow:AddToggle({text = "No Fall Damage", flag = nil, state = false; callback = function(tog)
+    
+    
+end});
+end
+
+do
+MainWindow:AddToggle({text = "Notifications", flag = nil, state = true; callback = function(tog)
+    
+    
+end});
+end
+
+do
+MainWindow:AddToggle({text = "Auto Iridium", flag = nil, state = false; callback = function(tog)
+    
+    
+end});
+end
+
+do
+MainWindow:AddToggle({text = "Chat Spy", flag = nil, state = false; callback = function(tog)
+    
+    
+end});
+end
+
+
+
+
+Library:Init(); 
