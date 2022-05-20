@@ -3,10 +3,10 @@ local Library           = loadstring(game:HttpGet("https://raw.githubusercontent
 local Notification = loadstring(game:HttpGet("https://raw.githubusercontent.com/nonono100/no/main/NotifyUI"))()
 getgenv().GSettings = {
 SetKey = "F1";
-FOV = 50;
+FOV = 60;
 NoFall = true;
 Notifs = true;
-AutoIrid = true;
+AutoIrid = false;
 ChatSpy = true;
 };
 
