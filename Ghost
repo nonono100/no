@@ -6,7 +6,7 @@ SetKey = "F1";
 FOV = 50;
 NoFall = true;
 Notifs = true;
-AutoIrid = false;
+AutoIrid = true;
 ChatSpy = true;
 };
 
