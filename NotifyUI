@@ -139,7 +139,7 @@ local ObjectTable = {
 	},
 	["Welcome"] = {
 		Text = "Settings will load next game. Use<b> F1</b> if you want to change them later.";
-		Duration = 12;
+		Duration = 8;
 		Type = "Message";
 		SoundSpeed = 0.4;
 	}
