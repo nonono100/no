@@ -32,7 +32,7 @@ MainWindow:AddBind({text = "Settings KeyBind", flag = "bind", key = "F1", callba
     end}) 
 end
 
-do MainWindow:AddSlider({text = "Silent Aim FOV", flag = "slider", value = GSettings["FOV"], min = 40, max = 100, float = 1, callback = function(a)  end}) end
+do MainWindow:AddSlider({text = "Silent Aim FOV", flag = "slider", value = GSettings["FOV"], min = 40, max = 120, float = 1, callback = function(a)  end}) end
 do MainWindow:AddToggle({text = "No Fall Damage", flag = "NoFall", state = GSettings["NoFall"]; callback = function(tog) end}); end
 do MainWindow:AddToggle({text = "Notifications", flag = "Notif", state = GSettings["Notifs"]; callback = function(tog) end}); end
 do MainWindow:AddToggle({text = "Auto Iridium", flag = "AutoIrid", state = GSettings["AutoIrid"]; callback = function(tog) end}); end
@@ -458,6 +458,8 @@ chatFrame.ChatBarParentFrame.Position = chatFrame.ChatChannelParentFrame.Positio
 
 
 -----------Notifications
+    if GSettings["Notifs"] then
+        print("test1")
 local RatingThreshold = 1100
 local everyArcTurret = {}
 StructureList = {
@@ -489,7 +491,6 @@ local function FindNearestPlayer(position)
 end
 local db = {}
 game.Workspace.Structures.ChildAdded:Connect(function(Structure)
-    if GSettings[Notifs] then
 	wait(Structure:FindFirstChild("Part"))
 	if table.find(StructureList, Structure.Name) then
 		local player = FindNearestPlayer(Structure:FindFirstChild("Part").Position)
@@ -529,20 +530,16 @@ game.Workspace.Structures.ChildAdded:Connect(function(Structure)
 		table.insert(PFRayIgnore, pp.Parent);
 		table.insert(everyArcTurret, Structure)
 	end
-	end
 end)
 
 game.Workspace.Structures.ChildRemoved:Connect(function(Structure)
-    if GSettings[Notifs] then
 	if Structure.Name == "Arc Turret" and table.find(everyArcTurret, Structure) and Structure:FindFirstChild("TeamColor").BrickColor ~= LocalPlayer.Team.BrickColor then --and Structure:FindFirstChild("EffectArgs") then 
 		table.remove(everyArcTurret, everyArcTurret[Structure])
-	end
 	end
 end)
 
 
 for i,v in pairs(game:GetService("Players"):GetPlayers()) do
-    if GSettings[Notifs] then
 	wait(0.1)
 	if v.Team ~= LocalPlayer.Team and v.Team ~= "Spectators" then 
 		v:FindFirstChild("Character");
@@ -583,13 +580,11 @@ for i,v in pairs(game:GetService("Players"):GetPlayers()) do
 			end
 		end)
 	end
-	end
 end
 
 
 
 spawn(function()
-    if GSettings[Notifs] then
 	local seconds = 0;
 	while true do 
 		wait(1)
@@ -616,7 +611,6 @@ spawn(function()
 			end
 		end
 	end
-	end
 end)
 
 local NotifActive;
@@ -624,7 +618,6 @@ local NotifSent;
 local dbArc = {}
 local waitTimeUp;
 while true do
-    if GSettings[Notifs] then
 	wait(0.1)
 	if #everyArcTurret > 0 and not NotifActive then
 		for i,v in pairs(everyArcTurret) do
@@ -677,6 +670,5 @@ while true do
 
 		end
 	end
-	end
 end
-
+end
