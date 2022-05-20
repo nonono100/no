@@ -1,4 +1,4 @@
---notify Ghost GUI // Welcome! Any changed settings will be saved. Use the toggle key if you want to access settings afterwards.
+
 local Library           = loadstring(game:HttpGet("https://raw.githubusercontent.com/mkswlorn/My-Repo/main/UI"))();
 local Notification = loadstring(game:HttpGet("https://raw.githubusercontent.com/nonono100/no/main/NotifyUI"))()
 getgenv().GSettings = {
@@ -78,6 +78,7 @@ if isfile('GHSet.txt') then
     LoadSettings()
 Library:Close()
 else 
+Notification.Notify(game.Players.LocalPlayer.DisplayName, "Welcome", { [1] = 255, [2] = 200, [3] = 200})
 SaveSettings()
 end
 
