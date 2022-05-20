@@ -12,19 +12,14 @@ ChatSpy = false;
 
 local function SaveSettings()
 local JSON -- is nil
-local HttpService = game:service('HttpService') -- used for the JSON DECODE AND ENCODE
---Decode
+local HttpService = game:service('HttpService')
 JSON = HttpService:JSONEncode(getgenv().GSettings)
---Make a text file using 'writefile'
 writefile('GHSet.txt',JSON)
 end
+
 local function LoadSettings()
 local HttpService = game:service('HttpService')
-
---use 'isfile' to check if we are reading the correct txt file
-
 if isfile('GHSet.txt') then
---use 'readfile' to read 'TUTORIAL.txt' and decode it
 getgenv().GSettings = HttpService:JSONDecode(readfile('GHSet.txt'))
 end
 end
@@ -37,11 +32,9 @@ MainWindow:AddBind({text = "Settings KeyBind", flag = "bind", key = "F1", callba
     Library:Close()
     end}) 
 end
---print(Library.flags.bind.key)
+
 do
 MainWindow:AddSlider({text = "SilentFOV", flag = "slider", value = 40, min = 20, max = 80, float = 1, callback = function(a) 
---changes will apply next game (notify)
-print(a)
 end})
 end
 
@@ -94,15 +87,6 @@ AutoIrid = Library.flags.AutoIrid;
 ChatSpy = Library.flags.ChatSpy;
 };
 SaveSettings()
-print("Settings do be changed doe")
     end
-    --[[
-    print(Library.flags.bind)
-print(Library.flags.slider)
-print(Library.flags.NoFall)
-print(Library.flags.Notif)
-print(Library.flags.AutoIrid)
-print(Library.flags.ChatSpy)
---]]
 end
 end)
