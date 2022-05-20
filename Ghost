@@ -354,6 +354,19 @@ end)
 -----------Auto Iridium
 local toggle = false
 local tabDown = false
+UserInput.InputBegan:connect(function(k)
+    local key = k.KeyCode
+    if key == Enum.KeyCode.E then
+        tabDown = true
+    end
+end)
+
+UserInput.InputEnded:connect(function(k)
+    local key = k.KeyCode
+    if key == Enum.KeyCode.E then
+        tabDown = false
+    end
+end)
 function onKeyPress(actionName, userInputState, inputObject)
     if userInputState == Enum.UserInputState.Begin then
         if toggle == false then
@@ -390,7 +403,7 @@ end;
         end
     end
 end
-
+game.ContextActionService:BindAction("keyPress", onKeyPress, false, Enum.KeyCode.T)
 spawn(function()
     while wait(0.1) do
      if GSettings["AutoIrid"] and tabDown and toggle == false then
