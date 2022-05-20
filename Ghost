@@ -71,13 +71,19 @@ local StarterGui = game:GetService("StarterGui")
 local Camera = workspace.CurrentCamera
 local UserInput = game:GetService("UserInputService")
 local RS = game:GetService("RunService")
+local CS = game:GetService("CollectionService");
+local RayIgnore = CS:GetTagged("RayIgnore");
+local PFRayIgnore = CS:GetTagged("PortafabRayIgnore");
 local Mouse = LocalPlayer:GetMouse()
 repeat wait() until LocalPlayer.Character 
 
 PlayerGui:SetTopbarTransparency(1)
+
+
+
+
+
 -----------Silent Aim
-
-
 local ScreenPointToRay = Instance.new("TextButton")
 getgenv().Distance = 150
 getgenv().Loaded = true
@@ -326,6 +332,10 @@ RS:BindToRenderStep("Get_Target",1,function()
 	end
 end)
 
+
+
+
+
 -----------Fall Damage
 spawn(function()
     while wait(1) do 
@@ -335,6 +345,11 @@ spawn(function()
         break
 end 
 end)
+
+
+
+
+
 
 -----------Auto Iridium
 local toggle = false
@@ -439,4 +454,229 @@ chatFrame.ChatChannelParentFrame.Visible = true
 chatFrame.ChatBarParentFrame.Position = chatFrame.ChatChannelParentFrame.Position+UDim2.new(UDim.new(),chatFrame.ChatChannelParentFrame.Size.Y)
 
 
+
+
+
+-----------Notifications
+local RatingThreshold = 1100
+local everyArcTurret = {}
+StructureList = {
+	"Bore",
+	"Priority Beacon",
+	"Artillery",
+	"S.S.I.M.",
+	"Barge",
+	"Spatial Anchor",
+	"Submersible",
+}
+WeaponsList = {
+	"Laser Strike",
+	"Rocket Launcher",
+	"Sniper Rifle",
+	"SMG"
+}
+local function FindNearestPlayer(position)
+	local found
+	local last = math.huge
+	for _,plyr in pairs(game.Players:GetPlayers()) do
+		local distance = plyr:DistanceFromCharacter(position)
+		if distance < last then
+			found = plyr
+			last = distance
+		end
+	end
+	return found
+end
+local db = {}
+game.Workspace.Structures.ChildAdded:Connect(function(Structure)
+    if GSettings[Notifs] then
+	wait(Structure:FindFirstChild("Part"))
+	if table.find(StructureList, Structure.Name) then
+		local player = FindNearestPlayer(Structure:FindFirstChild("Part").Position)
+		if player.Team == LocalPlayer.Team then 
+		else
+			if player.Team ~= "Spectators" then 
+				if (tonumber(player.leaderstats.Rating.Value) > RatingThreshold) then
+					if not db[player.Name] then
+						db[player.Name] = {}
+					end
+					if not db[player.Name][Structure.Name] then
+						db[player.Name][Structure.Name] = true
+						local Team = player.Team.TeamColor.Color
+						local r,g,b = math.floor(Team.R * 255), math.floor(Team.G * 255), math.floor(Team.B * 255)	Notification.Notify(player.DisplayName, Structure.Name, {
+							[1] = r,
+							[2] = g,
+							[3] = b
+						})
+						wait(40)
+						db[player.Name][Structure.Name] = false
+					end
+				end
+			end
+		end
+	end
+	if Structure.Name == "Arc Turret" and Structure:FindFirstChild("EffectArgs") and Structure:FindFirstChild("TeamColor").BrickColor ~= LocalPlayer.Team.TeamColor then
+		local pp = Structure:FindFirstChild("PrimaryPart")
+		pp.Size = Vector3.new(55,55,55)
+		pp.Transparency = 1
+		pp.CanCollide = false
+		pp.Color = Structure.TeamColor.Color
+		pp.Anchored = true
+		pp.Material = "ForceField"
+		pp.CastShadow = false
+		pp.Shape = Enum.PartType.Ball
+		table.insert(RayIgnore, pp.Parent);
+		table.insert(PFRayIgnore, pp.Parent);
+		table.insert(everyArcTurret, Structure)
+	end
+	end
+end)
+
+game.Workspace.Structures.ChildRemoved:Connect(function(Structure)
+    if GSettings[Notifs] then
+	if Structure.Name == "Arc Turret" and table.find(everyArcTurret, Structure) and Structure:FindFirstChild("TeamColor").BrickColor ~= LocalPlayer.Team.BrickColor then --and Structure:FindFirstChild("EffectArgs") then 
+		table.remove(everyArcTurret, everyArcTurret[Structure])
+	end
+	end
+end)
+
+
+for i,v in pairs(game:GetService("Players"):GetPlayers()) do
+    if GSettings[Notifs] then
+	wait(0.1)
+	if v.Team ~= LocalPlayer.Team and v.Team ~= "Spectators" then 
+		v:FindFirstChild("Character");
+		v.Backpack.ChildAdded:Connect(function(child)
+			if child:IsA("Tool") and table.find(WeaponsList, child.Name) then
+				if not db[v.Name] then
+					db[v.Name] = {}
+				end
+				if not db[v.Name][child.Name] then
+					print(v.Name.. child.Name)
+					db[v.Name][child.Name] = true
+					local Team = v.Team.TeamColor.Color
+					local r,g,b = math.floor(Team.R * 255), math.floor(Team.G * 255), math.floor(Team.B * 255)
+					Notification.Notify(v.DisplayName, child.Name, {
+						[1] = r,
+						[2] = g,
+						[3] = b
+					})
+				end
+			end
+		end)
+
+		v.Character:FindFirstChild("Humanoid").Died:Connect(function(e)
+			local Team = v.Team.TeamColor.Color
+			local r,g,b = math.floor(Team.R * 255), math.floor(Team.G * 255), math.floor(Team.B * 255)
+			Notification.Notify(v.Name, "Died", {
+				[1] = r,
+				[2] = g,
+				[3] = b
+			})
+			if not db[v.Name] then
+				db[v.Name] = {}
+			end
+			for i,w in ipairs(db[v.Name]) do
+				if table.find(WeaponsList, w) then
+					db[v.Name][w] = false
+				end
+			end
+		end)
+	end
+	end
+end
+
+
+
+spawn(function()
+    if GSettings[Notifs] then
+	local seconds = 0;
+	while true do 
+		wait(1)
+		seconds = seconds + 1
+		if seconds == 600 then
+			Notification.Notify("", "600", {
+				[1] = 255,
+				[2] = 255,
+				[3] = 255
+			})
+		else if seconds == 1800 then
+				Notification.Notify("", "1800", {
+					[1] = 255,
+					[2] = 255,
+					[3] = 255
+				})
+			else if seconds == 3600 then
+					Notification.Notify("", "3600", {
+						[1] = 255,
+						[2] = 255,
+						[3] = 255
+					})
+				end
+			end
+		end
+	end
+	end
+end)
+
+local NotifActive;
+local NotifSent;
+local dbArc = {}
+local waitTimeUp;
+while true do
+    if GSettings[Notifs] then
+	wait(0.1)
+	if #everyArcTurret > 0 and not NotifActive then
+		for i,v in pairs(everyArcTurret) do
+			local distance = LocalPlayer:DistanceFromCharacter(v:FindFirstChild("PrimaryPart").Position)
+			if distance < 50 then
+				NotifActive = true
+			end
+		end
+		if NotifActive == true then
+			spawn(function()
+				while wait(0.1) do
+					if NotifActive then
+						for i,v in pairs(everyArcTurret) do
+							local distance = LocalPlayer:DistanceFromCharacter(v:FindFirstChild("PrimaryPart").Position)
+							if distance < 100 and not table.find(dbArc, v) then --or v:FindFirstChild("PrimaryPart").Transparency == 1 then
+								v:FindFirstChild("PrimaryPart").Transparency = 0.7
+								table.insert(dbArc, v)
+							end
+							if distance > 50 and table.find(dbArc, v) then 
+								v:FindFirstChild("PrimaryPart").Transparency = 1 
+								table.remove(dbArc, dbArc[v])
+							end
+						end
+						print(#dbArc)
+						if waitTimeUp == true and #dbArc == 0 then 
+							NotifActive = false
+							NotifSent = false
+							waitTimeUp = false
+							for i,v in pairs(dbArc) do 
+								if table.find(dbArc, v) then
+									table.remove(dbArc, dbArc[v])
+									v:FindFirstChild("PrimaryPart").Transparency = 1
+								end
+							end
+							break
+						end
+					end	
+				end
+			end)
+			if not NotifSent then
+				Notification.Notify("", "Arc Turret", {
+					[1] = 255,
+					[2] = 255,
+					[3] = 255
+				})
+				NotifSent = true
+			end
+			wait(30)
+			waitTimeUp = true
+
+		end
+	end
+	end
+end
 
