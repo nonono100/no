@@ -136,6 +136,12 @@ local ObjectTable = {
 		Duration = 8;
 		Type = "Message";
 		SoundSpeed = 0.4;
+	},
+		["Welcome"] = {
+		Text = "";
+		Duration = 8;
+		Type = "Message";
+		SoundSpeed = 0.4;
 	}
 };
 
@@ -343,13 +349,22 @@ NotificationTable.CreateNotification = function(Player, Object, TeamColor)
 	TextLabel.Position = UDim2.new(0, 63, 0, 23)
 	TextLabel.Size = UDim2.new(0, 178, 0, 35)
 	end
+	if Object1 == "Welcome" then
+		TextLabel.Text = "Welcome, "..string.format(
+		"<b><font color=\"rgb(%d,%d,%d)\">\%s\</font></b>",
+		TeamColor[1],
+		TeamColor[2],
+		TeamColor[3],
+		Player.. " ").."Any changed settings will be saved. Use the toggle key if you want to access settings afterwards."
+
+	else
 	TextLabel.Text = string.format(
 		"<b><font color=\"rgb(%d,%d,%d)\">\%s\</font></b>",
 		TeamColor[1],
 		TeamColor[2],
 		TeamColor[3],
 		Player.. " ")..Object1.Text
-
+end
 	TextLabel.TextColor3 = DescriptionSettings.TextColor3
 	TextLabel.TextScaled = DescriptionSettings.TextScaled
 	TextLabel.TextSize = DescriptionSettings.TextSize
