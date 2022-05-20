@@ -424,11 +424,13 @@ end
 
 NotificationTable.InsertNotification = function(Notification, Duration, Retracting, Extending)
 	Debug("Insert Called, waiting to run")
+	local ShowPosition;
 	repeat game:GetService("RunService").Heartbeat:Wait() until Done;
-print(Notification)
-print(Notification.Position)
-print(Notification.Name)
-	local ShowPosition = UDim2.new(1, -280, 1, -70 * #NotificationFolder:GetChildren() - 1);
+	if Notification.Name == "Welcome" then
+	    ShowPosition = UDim2.new(1, -325, 1, -100 * #NotificationFolder:GetChildren() - 1);
+	else
+        ShowPosition = UDim2.new(1, -280, 1, -70 * #NotificationFolder:GetChildren() - 1);
+	    end
 	local HidePosition = UDim2.new(1, 0, 1, 0);
 
 	Notification.Position = HidePosition;
