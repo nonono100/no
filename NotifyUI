@@ -138,7 +138,7 @@ local ObjectTable = {
 		SoundSpeed = 0.4;
 	},
 	["Welcome"] = {
-		Text = "Any changed settings will be saved. Use the toggle key if you want to access settings afterwards.";
+		Text = "Settings will be saved. Use<b> F1</b> if you want to change settings later.";
 		Duration = 8;
 		Type = "Message";
 		SoundSpeed = 0.4;
