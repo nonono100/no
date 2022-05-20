@@ -119,20 +119,20 @@ local ObjectTable = {
 		Volume = 0;
 	},
 	["600"] = {
-		Text = "⌚You have played for <b>10 Minutes</b>⌚";
+		Text = "⌚You have played for <b>10 Minutes</b>";
 		Duration = 8;
 		Type = "Message";
 		SoundSpeed = 0.4;
 	},
 	["1800"] = {
-		Text = "⌚You have played for <b>30 Minutes</b>⌚";
+		Text = "⌚You have played for <b>30 Minutes</b>";
 		Image = "";
 		Duration = 8;
 		Type = "Message";
 		SoundSpeed = 0.4;
 	},
 	["3600"] = {
-		Text = "⌚You have played for <b>1 Hour</b>⌚";
+		Text = "⌚You have played for <b>1 Hour</b>";
 		Duration = 8;
 		Type = "Message";
 		SoundSpeed = 0.4;
