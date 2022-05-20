@@ -404,7 +404,6 @@ end
 	Frame.Size = UDim2.new(0, 263, 0, 3)
 	Frame.Visible = false;
 	Debug("Frame finished")
-
 	UIGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(255, 8, 231)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(64, 0, 255))}
 	UIGradient.Parent = Frame
 	Debug("Gradient finished")
@@ -413,7 +412,11 @@ end
 		Frame.Visible = true
 	elseif GradientSettings.SolidColor then
 			UIGradient:Destroy();
+			        if Object == "Welcome" then
+	Frame.BackgroundColor3 = Color3.fromRGB(51, 51, 255)
+	else
 			Frame.BackgroundColor3 = GradientSettings.SolidColor
+			end
 			Frame.Visible = true
 	end
 	sound:Play()
