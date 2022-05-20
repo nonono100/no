@@ -3,11 +3,11 @@ local Library           = loadstring(game:HttpGet("https://raw.githubusercontent
 local Notification = loadstring(game:HttpGet("https://raw.githubusercontent.com/nonono100/no/main/NotifyUI"))()
 getgenv().GSettings = {
 SetKey = "F1";
-SilentFOV = 40;
-NoFall = false;
+FOV = 50;
+NoFall = true;
 Notifs = true;
 AutoIrid = false;
-ChatSpy = false;
+ChatSpy = true;
 };
 
 local function SaveSettings()
@@ -24,7 +24,6 @@ getgenv().GSettings = HttpService:JSONDecode(readfile('GHSet.txt'))
 end
 end
 
-
 local MainWindow        = Library:CreateWindow("Settings");
 
 do
@@ -33,40 +32,13 @@ MainWindow:AddBind({text = "Settings KeyBind", flag = "bind", key = "F1", callba
     end}) 
 end
 
-do
-MainWindow:AddSlider({text = "SilentFOV", flag = "slider", value = 40, min = 20, max = 80, float = 1, callback = function(a) 
-end})
-end
-
-do
-MainWindow:AddToggle({text = "No Fall Damage", flag = "NoFall", state = false; callback = function(tog)
-    
-end});
-end
-
-do
-MainWindow:AddToggle({text = "Notifications", flag = "Notif", state = true; callback = function(tog)
-    
-end});
-end
-
-do
-MainWindow:AddToggle({text = "Auto Iridium", flag = "AutoIrid", state = false; callback = function(tog)
-    
-    
-end});
-end
-
-do
-MainWindow:AddToggle({text = "Chat Spy", flag = "ChatSpy", state = false; callback = function(tog)
-    
-    
-end});
-end
-
-
-
+do MainWindow:AddSlider({text = "Silent Aim FOV", flag = "slider", value = GSettings["FOV"], min = 40, max = 100, float = 1, callback = function(a)  end}) end
+do MainWindow:AddToggle({text = "No Fall Damage", flag = "NoFall", state = GSettings["NoFall"]; callback = function(tog) end}); end
+do MainWindow:AddToggle({text = "Notifications", flag = "Notif", state = GSettings["Notifs"]; callback = function(tog) end}); end
+do MainWindow:AddToggle({text = "Auto Iridium", flag = "AutoIrid", state = GSettings["AutoIrid"]; callback = function(tog) end}); end
+do MainWindow:AddToggle({text = "Chat Spy", flag = "ChatSpy", state = GSettings["ChatSpy"]; callback = function(tog) end}); end
 Library:Init(); 
+
 if isfile('GHSet.txt') then
     LoadSettings()
 Library:Close()
@@ -77,10 +49,10 @@ end
 
 spawn(function()
 while wait(1) do
-    if Library.flags.bind ~= GSettings["SetKey"] or Library.flags.slider ~= GSettings["SilentFOV"] or Library.flags.NoFall ~= GSettings["NoFall"] or Library.flags.Notif ~= GSettings["Notifs"] or Library.flags.AutoIrid ~= GSettings["AutoIrid"] or Library.flags.ChatSpy ~= GSettings["ChatSpy"] then
+    if Library.flags.bind ~= GSettings["SetKey"] or Library.flags.slider ~= GSettings["FOV"] or Library.flags.NoFall ~= GSettings["NoFall"] or Library.flags.Notif ~= GSettings["Notifs"] or Library.flags.AutoIrid ~= GSettings["AutoIrid"] or Library.flags.ChatSpy ~= GSettings["ChatSpy"] then
     getgenv().GSettings = {
 SetKey = Library.flags.bind;
-SilentFOV = Library.flags.slider;
+FOV = Library.flags.slider;
 NoFall = Library.flags.NoFall;
 Notifs = Library.flags.Notif;
 AutoIrid = Library.flags.AutoIrid;
@@ -90,3 +62,381 @@ SaveSettings()
     end
 end
 end)
+-----------Variables
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer or Players:GetPropertyChangedSignal("LocalPlayer"):Wait() or Players.LocalPlayer
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+local StarterGui = game:GetService("StarterGui")
+local Camera = workspace.CurrentCamera
+local UserInput = game:GetService("UserInputService")
+local RS = game:GetService("RunService")
+local Mouse = LocalPlayer:GetMouse()
+repeat wait() until LocalPlayer.Character 
+
+PlayerGui:SetTopbarTransparency(1)
+-----------Silent Aim
+
+
+local ScreenPointToRay = Instance.new("TextButton")
+getgenv().Distance = 150
+getgenv().Loaded = true
+getgenv().Open = false
+local rigType = string.split(tostring(LocalPlayer.Character:WaitForChild("Humanoid").RigType), ".")[3]
+
+local rigTypeR15 = {
+	["Head"] = true,
+	["UpperTorso"] = true,
+	["LowerTorso"] = true,
+	["LeftUpperArm"] = true,
+	["RightUpperArm"] = true,
+	["RightLowerArm"] = true,
+	["LeftLowerArm"] = true,
+	["LeftHand"] = true,
+	["RightHand"] = true,
+	["LeftUpperLeg"] = true,
+	["RightUpperLeg"] = true,
+	["LeftLowerLeg"] = true,
+	["RightLowerLeg"] = true,
+	["LeftFoot"] = true,
+	["RightFoot"] = true
+}
+
+local selected_rigType = rigTypeR15
+
+local function teamType(player)
+	if player.Team or player.TeamColor then
+		local teamplayer = player.Team or player.TeamColor
+		return teamplayer
+	end
+end
+
+local function characterType(player)
+	playerName = player.Name
+	if player.Character or workspace:FindFirstChild(playerName) then
+		local playerCharacter = player.Character or workspace:FindFirstChild(playerName)
+		return playerCharacter
+	end
+end
+
+local function returnVisibility(player)
+	if characterType(player) then 
+		if player.Character:FindFirstChild("Head") then 
+                --[[
+                if LocalPlayer.Character:FindFirstChildWhichIsA("Tool").Name ~= Portafab then
+                CastPoint = {LocalPlayer.Character:FindFirstChildWhichIsA('Tool').Handle.Position, player.Character["Head"].Position}
+                
+                --]]
+			CastPoint = {LocalPlayer.Character["Head"].Position, player.Character["Head"].Position}
+			IgnoreList = {player.Character, LocalPlayer.Character}
+			local castpointparts = workspace.CurrentCamera:GetPartsObscuringTarget(CastPoint, IgnoreList)
+			if unpack(castpointparts) then
+				return false
+			end
+			-- end
+			-- end
+		end
+	end
+	return true
+end
+
+local function returnRay(args, hit)
+	CCF = Camera.CFrame.p
+	args[2] = Ray.new(CCF, (hit.Position + Vector3.new(0,(CCF-hit.Position).Magnitude/getgenv().Distance,0) - CCF).unit * (getgenv().Distance * 10))
+	return args[2]
+end
+
+local function createBox(player)
+	local lines = Instance.new("Frame")
+	lines.Name = player.Name
+	lines.BackgroundTransparency = 1
+	lines.AnchorPoint = Vector2.new(0.5,0.5)
+
+	local outlines = Instance.new("Folder", lines)
+	outlines.Name = "outlines"
+	local inlines = Instance.new("Folder", lines)
+	inlines.Name = "inlines"
+
+	local outline1 = Instance.new("Frame", outlines)
+	outline1.Name = "left"
+	outline1.BorderSizePixel = 0
+	outline1.BackgroundColor3 = Color3.new(0,0,0)
+	outline1.Size = UDim2.new(0,-1,1,0)
+
+	local outline2 = Instance.new("Frame", outlines)
+	outline2.Name = "right"
+	outline2.BorderSizePixel = 0
+	outline2.BackgroundColor3 = Color3.new(0,0,0)
+	outline2.Position = UDim2.new(1,0,0,0)
+	outline2.Size = UDim2.new(0,1,1,0)
+
+	local outline3 = Instance.new("Frame", outlines)
+	outline3.Name = "up"
+	outline3.BorderSizePixel = 0
+	outline3.BackgroundColor3 = Color3.new(0,0,0)
+	outline3.Size = UDim2.new(1,0,0,-1)
+
+	local outline4 = Instance.new("Frame", outlines)
+	outline4.Name = "down"
+	outline4.BorderSizePixel = 0
+	outline4.BackgroundColor3 = Color3.new(0,0,0)
+	outline4.Position = UDim2.new(0,0,1,0)
+	outline4.Size = UDim2.new(1,0,0,1)
+
+	local inline1 = Instance.new("Frame", inlines)
+	inline1.Name = "left"
+	inline1.BorderSizePixel = 0
+	inline1.Size = UDim2.new(0,1,1,0)
+
+	local inline2 = Instance.new("Frame", inlines)
+	inline2.Name = "right"
+	inline2.BorderSizePixel = 0
+	inline2.Position = UDim2.new(1,0,0,0)
+	inline2.Size = UDim2.new(0,-1,1,0)
+
+	local inline3 = Instance.new("Frame", inlines)
+	inline3.Name = "up"
+	inline3.BorderSizePixel = 0
+	inline3.Size = UDim2.new(1,0,0,1)
+
+	local inline4 = Instance.new("Frame", inlines)
+	inline4.Name = "down"
+	inline4.BorderSizePixel = 0
+	inline4.Position = UDim2.new(0,0,1,0)
+	inline4.Size = UDim2.new(1,0,0,-1)
+
+	for _,v in pairs(inlines:GetChildren()) do
+		v.BackgroundColor3 = Color3.fromRGB(255, 74, 74)
+	end
+
+	return lines
+end
+
+spawn(function()
+	local Circle = Drawing.new('Circle')
+	Circle.Transparency = 1
+	Circle.Thickness = 1.5
+	Circle.Visible = false
+	Circle.Color = Color3.fromRGB(255,255,255)
+	Circle.Filled = false
+	Circle.Radius = GSettings["FOV"]
+
+	RS:BindToRenderStep("Get_Fov",1,function()
+		if getgenv().Loaded then
+			local Length = 10
+			local Middle = 37
+			Circle.Visible = false
+			Circle.Radius = GSettings["FOV"]
+			Circle.Position = Vector2.new(Mouse.X,Mouse.Y+Middle)
+
+		end
+	end)
+end)
+
+function getTarget()
+	local closestTarg = math.huge
+	local Target = nil
+	pcall(function()
+		if LocalPlayer.Character:FindFirstChildWhichIsA("Tool").Name == "Pistol" then getgenv().Distance = 128 end
+		if LocalPlayer.Character:FindFirstChildWhichIsA("Tool").Name == "Portafab" then getgenv().Distance = 1 end
+		if LocalPlayer.Character:FindFirstChildWhichIsA("Tool").Name == "Assault Rifle" then getgenv().Distance = 192 end
+		if LocalPlayer.Character:FindFirstChildWhichIsA("Tool").Name == "SMG" then getgenv().Distance = 96 end
+		if LocalPlayer.Character:FindFirstChildWhichIsA("Tool").Name == "Minigun" then getgenv().Distance = 192 end
+		if LocalPlayer.Character:FindFirstChildWhichIsA("Tool").Name == "Shotgun" then getgenv().Distance = 128 end
+		if LocalPlayer.Character:FindFirstChildWhichIsA("Tool").Name == "Sniper Rifle" then getgenv().Distance = 512 end
+		if LocalPlayer.Character:FindFirstChildWhichIsA("Tool").Name == "AP DMR" then getgenv().Distance = 256 end
+		if LocalPlayer.Character:FindFirstChildWhichIsA("Tool").Name == "Auto-Flechette" then getgenv().Distance = 128 end
+		if LocalPlayer.Character:FindFirstChildWhichIsA("Tool").Name == "High-power Photon Lancer" then getgenv().Distance = 1024 end
+	end)
+	for _, Player in next, Players:GetPlayers() do
+
+		if Player ~= LocalPlayer and returnVisibility(Player) and teamType(Player) ~= teamType(LocalPlayer) and Player ~= LocalPlayer and returnVisibility(Player) then
+			local playerCharacter = characterType(Player)
+			if playerCharacter then
+				local playerHumanoid = playerCharacter:FindFirstChild("Humanoid")
+				local playerPart = playerCharacter:FindFirstChild("Head")
+				if playerPart and playerHumanoid then
+					local hitVector, onScreen = Camera:WorldToScreenPoint(playerPart.Position)
+					if onScreen and playerHumanoid.Health > 0 then
+						local CCF = Camera.CFrame.p
+						if workspace:FindPartOnRayWithIgnoreList(Ray.new(CCF, (playerPart.Position-CCF).unit * getgenv().Distance),{Player}) then
+							local hitTargMagnitude = (Vector2.new(Mouse.X, Mouse.Y) - Vector2.new(hitVector.X, hitVector.Y)).magnitude
+							if hitTargMagnitude < closestTarg and hitTargMagnitude <= GSettings["FOV"] then
+								Target = Player
+								closestTarg = hitTargMagnitude
+							end
+						else
+						end
+					else
+					end
+				end
+			end
+		end
+	end
+	return Target
+end
+
+local mt = getrawmetatable(game)
+setreadonly(mt, false)
+local index = mt.__index
+local namecall = mt.__namecall
+local hookfunc
+
+mt.__namecall = newcclosure(function(...)
+	local method = getnamecallmethod()
+	local args = {...}
+	if method == "FindPartOnRayWithIgnoreList" then
+		if Hit then
+			returnRay(args, Hit)
+			return namecall(unpack(args))
+		end
+	end
+	return namecall(unpack(args))
+end)
+
+mt.__index = newcclosure(function(func, idx)
+	if func == Mouse and tostring(idx) == "Hit" and Hit then
+		return Hit.CFrame
+	end
+	return index(func, idx)
+end)
+
+hookfunc = hookfunction(workspace.FindPartOnRayWithIgnoreList, function(...)
+	local args = {...}
+	if Hit then
+		returnRay(args, Hit)
+	end
+	return hookfunc(unpack(args))
+end)
+
+RS:BindToRenderStep("Get_Target",1,function()
+	local Target = getTarget()
+	if not Target then
+		Hit = nil
+		getgenv().SelectedTarget = ""
+	elseif Target and getgenv().Loaded then
+		getgenv().SelectedTarget = Target.Name .. "\n" .. math.floor((LocalPlayer.Character["Head"].Position - Target.Character["Head"].Position).magnitude) .. " Studs"
+	end
+	if UserInput:IsMouseButtonPressed(0) then
+		if getgenv().Loaded and Target then
+			Hit = Target.Character["Head"]
+		end
+	else
+		Hit = nil
+	end
+end)
+
+-----------Fall Damage
+spawn(function()
+    while wait(1) do 
+        if GSettings[NoFall] then
+    game.ReplicatedStorage.Shared.Remotes.FallDamageDamageTaken:Destroy()
+        end
+        break
+end 
+end)
+
+-----------Auto Iridium
+local toggle = false
+local tabDown = false
+function onKeyPress(actionName, userInputState, inputObject)
+    if userInputState == Enum.UserInputState.Begin then
+        if toggle == false then
+             toggle = true
+             warn("Refill Enabled [T]")
+             local z = game.Workspace.Structures:GetChildren()
+for i=1, #z do
+if z[i].Name == "Refill Station" then 
+    local Team = z[i]:GetChildren()
+    for i=1, #Team do
+if Team[i].Name == "TeamColor" and Team[i].BrickColor == game.Players.LocalPlayer.TeamColor then
+local model1 = Team[i].Parent:GetChildren()
+for i=1, #model1 do
+if model1[i].Name == "RefillConsole" then 
+    local cc = model1[i]:GetChildren()
+    for i=1, #cc do
+    for __,v in pairs(cc) do
+    if v.Name == "Part" and v:IsA("Part") then
+Boxhit1 = v
+end
+end
+end
+end
+end
+end
+end
+end
+end;
+              
+        else
+            toggle = false
+            warn("Refill Disabled [T]")
+            
+        end
+    end
+end
+
+spawn(function()
+    while wait(0.1) do
+     if GSettings["AutoIrid"] and tabDown and toggle == false then
+local Boxhit = game.Workspace.Resources.IridiumCrystal.Hitbox
+local anewCFrame1 = game.Players.LocalPlayer.Character.LeftFoot.Position
+game.ReplicatedStorage.Shared.Remotes.Portafab:FireServer(5,3,{anewCFrame1,Boxhit})
+end
+  if GSettings["AutoIrid"] and tabDown and toggle == true then 
+      local anewCFrame = game.Players.LocalPlayer.Character.LeftFoot.Position
+        game.ReplicatedStorage.Shared.Remotes.Portafab:FireServer(5,3,{anewCFrame,Boxhit1})
+else
+end
+end
+end)
+
+-----------ChatSpy
+privateProperties = {	
+    Font = Enum.Font.SourceSansBold;
+	TextSize = 18;
+};
+local saymsg = game:GetService("ReplicatedStorage"):WaitForChild("DefaultChatSystemChatEvents"):WaitForChild("SayMessageRequest")
+local getmsg = game:GetService("ReplicatedStorage"):WaitForChild("DefaultChatSystemChatEvents"):WaitForChild("OnMessageDoneFiltering")
+local instance = (_G.chatSpyInstance or 0) + 1
+_G.chatSpyInstance = instance
+local function onChatted(p,msg)
+	if _G.chatSpyInstance == instance then
+		if GSettings["ChatSpy"] and p~=player then
+			msg = msg:gsub("[\n\r]",''):gsub("\t",' '):gsub("[ ]+",' ')
+			local hidden = true
+			local conn = getmsg.OnClientEvent:Connect(function(packet,channel)
+				if packet.SpeakerUserId==p.UserId and packet.Message==msg:sub(#msg-#packet.Message+1) and (channel=="All" or (channel=="Team" and p.Team==player.Team)) then
+					hidden = false
+				end
+			end)
+			wait(1)
+			conn:Disconnect()
+			if hidden and GSettings["ChatSpy"] then
+			        local Team = p.Team.TeamColor.Color
+						local r,g,b = math.floor(Team.R * 255), math.floor(Team.G * 255), math.floor(Team.B * 255)
+					privateProperties.Text = "{"..p.Team.Name.."} " .."["..p.DisplayName.."]: ".. msg
+				    privateProperties.Color = Color3.fromRGB(r,g,b); 
+					
+					
+					StarterGui:SetCore("ChatMakeSystemMessage",privateProperties)
+			end
+		end
+	end
+end
+
+for _,p in ipairs(Players:GetPlayers()) do
+	p.Chatted:Connect(function(msg) onChatted(p,msg) end)
+end
+Players.PlayerAdded:Connect(function(p)
+	p.Chatted:Connect(function(msg) onChatted(p,msg) end)
+end)
+player:WaitForChild("PlayerGui"):WaitForChild("Chat")
+StarterGui:SetCore("ChatMakeSystemMessage",privateProperties)
+wait(3)
+local chatFrame = player.PlayerGui.Chat.Frame
+chatFrame.ChatChannelParentFrame.Visible = true
+chatFrame.ChatBarParentFrame.Position = chatFrame.ChatChannelParentFrame.Position+UDim2.new(UDim.new(),chatFrame.ChatChannelParentFrame.Size.Y)
+
+
+
