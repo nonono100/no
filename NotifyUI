@@ -296,9 +296,14 @@ NotificationTable.CreateNotification = function(Player, Object, TeamColor)
 	Debug("_Temp 3/9")
 	_Template.BorderColor3 = MainSettings.BorderColor3
 	Debug("_Temp 4/9")
+	if Object == "Welcome" then
+	    	_Template.Position = UDim2.new(1, -325, 1, -100)
+	_Template.Size = UDim2.new(0, 300, 0, 80)
+	    else
 	_Template.Position = UDim2.new(0.713929176, 0, 0.587826073, 0)
 	Debug("_Temp 5/9")
 	_Template.Size = UDim2.new(0, 270, 0, 64)
+	end
 	Debug("_Temp 6/9")
 	_Template.ZIndex = 9
 	Debug("_Temp 7/9")
@@ -319,6 +324,7 @@ NotificationTable.CreateNotification = function(Player, Object, TeamColor)
 	Debug("Icon finished")
 	UIAspectRatioConstraint.Parent = Icon
 	Debug("UiAspect finished")
+	if not Object == "Welcome" then
 	Title.Name = "Title"
 	Title.Parent = _Template
 	Title.BackgroundTransparency = 1.000
@@ -338,14 +344,19 @@ NotificationTable.CreateNotification = function(Player, Object, TeamColor)
 	Title.Font = TitleSettings.Font
 	Title.BackgroundColor3 = TitleSettings.BackgroundColor3
 	Title.RichText = true
+	end
 	Debug("Title finished")
 	TextLabel.Parent = _Template
 	TextLabel.BackgroundColor3 = DescriptionSettings.BackgroundColor3
 	TextLabel.BackgroundTransparency = 1.000
-	if Object1.Type == "Message" then
+	if Object1.Type == "Message" and not Object == "Welcome" then
 		TextLabel.Position = UDim2.new(0, 10, 0, 23)
 		TextLabel.Size = UDim2.new(0, 250, 0, 35)
 		else
+		    if Object == "Welcome" then
+		  TextLabel.Position = UDim2.new(0, 8, 0, 10)
+		TextLabel.Size = UDim2.new(0, 280, 0, 60)
+		        else
 	TextLabel.Position = UDim2.new(0, 63, 0, 23)
 	TextLabel.Size = UDim2.new(0, 178, 0, 35)
 	end
