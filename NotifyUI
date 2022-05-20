@@ -297,10 +297,10 @@ NotificationTable.CreateNotification = function(Player, Object, TeamColor)
 	Debug("_Temp 3/9")
 	_Template.BorderColor3 = MainSettings.BorderColor3
 	Debug("_Temp 4/9")
-		print("cheese")
 	if Object == "Welcome" then
 	    	_Template.Position = UDim2.new(1, -325, 1, -100)
 	_Template.Size = UDim2.new(0, 300, 0, 80)
+	_Template.Name = "Welcome"
 	    else
 	_Template.Position = UDim2.new(0.713929176, 0, 0.587826073, 0)
 	Debug("_Temp 5/9")
@@ -351,7 +351,6 @@ NotificationTable.CreateNotification = function(Player, Object, TeamColor)
 	TextLabel.Parent = _Template
 	TextLabel.BackgroundColor3 = DescriptionSettings.BackgroundColor3
 	TextLabel.BackgroundTransparency = 1.000
-		print("cheese1")
 	if Object1.Type == "Message" and not Object == "Welcome" then
 		TextLabel.Position = UDim2.new(0, 10, 0, 23)
 		TextLabel.Size = UDim2.new(0, 250, 0, 35)
@@ -364,7 +363,6 @@ NotificationTable.CreateNotification = function(Player, Object, TeamColor)
 	TextLabel.Size = UDim2.new(0, 178, 0, 35)
 		    end
 end
-	print("cheese2")
 	if Object == "Welcome" then
 		TextLabel.Text = "Welcome, "..string.format(
 		"<b><font color=\"rgb(%d,%d,%d)\">\%s\</font></b>",
@@ -381,7 +379,6 @@ end
 		TeamColor[3],
 		Player.. " ")..Object1.Text
 end
-	print("cheese3")
 	TextLabel.TextColor3 = DescriptionSettings.TextColor3
 	TextLabel.TextScaled = DescriptionSettings.TextScaled
 	TextLabel.TextSize = DescriptionSettings.TextSize
@@ -396,7 +393,6 @@ end
 	TextLabel.BackgroundColor3 = DescriptionSettings.BackgroundColor3
 	TextLabel.RichText = true
 	Debug("TextLanel finished")
-	print("cheese4")
 	if MainSettings.Rounding then
 		UICorner.Parent = _Template
 	end
@@ -422,7 +418,6 @@ end
 	end
 	sound:Play()
 	Debug("Returning Objects")
-	print("cheese5")
 	return {_Template, Duration, GradientSettings.Retract, GradientSettings.Extend};
 
 end
@@ -430,7 +425,9 @@ end
 NotificationTable.InsertNotification = function(Notification, Duration, Retracting, Extending)
 	Debug("Insert Called, waiting to run")
 	repeat game:GetService("RunService").Heartbeat:Wait() until Done;
-
+print(Notification)
+print(Notification.Position)
+print(Notification.Name)
 	local ShowPosition = UDim2.new(1, -280, 1, -70 * #NotificationFolder:GetChildren() - 1);
 	local HidePosition = UDim2.new(1, 0, 1, 0);
 
