@@ -138,8 +138,8 @@ local ObjectTable = {
 		SoundSpeed = 0.4;
 	},
 	["Welcome"] = {
-		Text = "Any changed settings will be saved. Use the toggle key if you want to access settings afterwards.";
-		Duration = 8;
+		Text = "Settings save and will load next game. Use<b> F1</b> if you want to change them later.";
+		Duration = 12;
 		Type = "Message";
 		SoundSpeed = 0.4;
 	}
@@ -206,6 +206,7 @@ end
 local NotificationFolder = Instance.new("Folder");
 
 NotificationTable.CreateNotification = function(Player, Object, TeamColor)
+    
 	Debug("CREATED_",Player, Object, TeamColor)
 	local Object1 = ObjectTable[Object]
 	local Duration = Object1.Duration;
@@ -296,9 +297,15 @@ NotificationTable.CreateNotification = function(Player, Object, TeamColor)
 	Debug("_Temp 3/9")
 	_Template.BorderColor3 = MainSettings.BorderColor3
 	Debug("_Temp 4/9")
+	if Object == "Welcome" then
+	    	_Template.Position = UDim2.new(1, -325, 1, -100)
+	_Template.Size = UDim2.new(0, 300, 0, 80)
+	_Template.Name = "Welcome"
+	    else
 	_Template.Position = UDim2.new(0.713929176, 0, 0.587826073, 0)
 	Debug("_Temp 5/9")
 	_Template.Size = UDim2.new(0, 270, 0, 64)
+	end
 	Debug("_Temp 6/9")
 	_Template.ZIndex = 9
 	Debug("_Temp 7/9")
@@ -319,6 +326,7 @@ NotificationTable.CreateNotification = function(Player, Object, TeamColor)
 	Debug("Icon finished")
 	UIAspectRatioConstraint.Parent = Icon
 	Debug("UiAspect finished")
+	if Object ~= "Welcome" then
 	Title.Name = "Title"
 	Title.Parent = _Template
 	Title.BackgroundTransparency = 1.000
@@ -338,17 +346,23 @@ NotificationTable.CreateNotification = function(Player, Object, TeamColor)
 	Title.Font = TitleSettings.Font
 	Title.BackgroundColor3 = TitleSettings.BackgroundColor3
 	Title.RichText = true
+	end
 	Debug("Title finished")
 	TextLabel.Parent = _Template
 	TextLabel.BackgroundColor3 = DescriptionSettings.BackgroundColor3
 	TextLabel.BackgroundTransparency = 1.000
-	if Object1.Type == "Message" then
+	if Object1.Type == "Message" and not Object == "Welcome" then
 		TextLabel.Position = UDim2.new(0, 10, 0, 23)
 		TextLabel.Size = UDim2.new(0, 250, 0, 35)
 		else
+		    if Object == "Welcome" then
+		  TextLabel.Position = UDim2.new(0, 8, 0, 10)
+		TextLabel.Size = UDim2.new(0, 280, 0, 60)
+		        else
 	TextLabel.Position = UDim2.new(0, 63, 0, 23)
 	TextLabel.Size = UDim2.new(0, 178, 0, 35)
-	end
+		    end
+end
 	if Object == "Welcome" then
 		TextLabel.Text = "Welcome, "..string.format(
 		"<b><font color=\"rgb(%d,%d,%d)\">\%s\</font></b>",
@@ -379,7 +393,6 @@ end
 	TextLabel.BackgroundColor3 = DescriptionSettings.BackgroundColor3
 	TextLabel.RichText = true
 	Debug("TextLanel finished")
-
 	if MainSettings.Rounding then
 		UICorner.Parent = _Template
 	end
@@ -405,16 +418,19 @@ end
 	end
 	sound:Play()
 	Debug("Returning Objects")
-
 	return {_Template, Duration, GradientSettings.Retract, GradientSettings.Extend};
 
 end
 
 NotificationTable.InsertNotification = function(Notification, Duration, Retracting, Extending)
 	Debug("Insert Called, waiting to run")
+	local ShowPosition;
 	repeat game:GetService("RunService").Heartbeat:Wait() until Done;
-
-	local ShowPosition = UDim2.new(1, -280, 1, -70 * #NotificationFolder:GetChildren() - 1);
+	if Notification.Name == "Welcome" then
+	    ShowPosition = UDim2.new(1, -325, 1, -100 * #NotificationFolder:GetChildren() - 1);
+	else
+        ShowPosition = UDim2.new(1, -280, 1, -70 * #NotificationFolder:GetChildren() - 1);
+	    end
 	local HidePosition = UDim2.new(1, 0, 1, 0);
 
 	Notification.Position = HidePosition;
