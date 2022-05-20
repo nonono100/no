@@ -296,15 +296,9 @@ NotificationTable.CreateNotification = function(Player, Object, TeamColor)
 	Debug("_Temp 3/9")
 	_Template.BorderColor3 = MainSettings.BorderColor3
 	Debug("_Temp 4/9")
-	
-	Debug("_Temp 5/9")
-	if Object == "Welcome" then
-	_Template.Size = UDim2.new(0, 325, 0, 90)
-	_Template.Position = UDim2.new(0.503929176, 0, 0.587826073, 0)
-	else
-	_Template.Size = UDim2.new(0, 270, 0, 64)
 	_Template.Position = UDim2.new(0.713929176, 0, 0.587826073, 0)
-	end
+	Debug("_Temp 5/9")
+	_Template.Size = UDim2.new(0, 270, 0, 64)
 	Debug("_Temp 6/9")
 	_Template.ZIndex = 9
 	Debug("_Temp 7/9")
@@ -353,11 +347,7 @@ NotificationTable.CreateNotification = function(Player, Object, TeamColor)
 		TextLabel.Size = UDim2.new(0, 250, 0, 35)
 		else
 	TextLabel.Position = UDim2.new(0, 63, 0, 23)
-	if Object == "Welcome" then
-	TextLabel.Size = UDim2.new(0, 270, 0, 35)
-	else
 	TextLabel.Size = UDim2.new(0, 178, 0, 35)
-	end
 	end
 	if Object == "Welcome" then
 		TextLabel.Text = "Welcome, "..string.format(
