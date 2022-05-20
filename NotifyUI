@@ -353,7 +353,11 @@ NotificationTable.CreateNotification = function(Player, Object, TeamColor)
 		TextLabel.Size = UDim2.new(0, 250, 0, 35)
 		else
 	TextLabel.Position = UDim2.new(0, 63, 0, 23)
+	if Object == "Welcome" then
+	TextLabel.Size = UDim2.new(0, 270, 0, 35)
+	else
 	TextLabel.Size = UDim2.new(0, 178, 0, 35)
+	end
 	end
 	if Object == "Welcome" then
 		TextLabel.Text = "Welcome, "..string.format(
