@@ -1,0 +1,190 @@
+
+--[[
+local cframes = {
+	["Researcher"] = CFrame.new(16.7646713, -3.00000072, 21.9856625, 0.06708657, 1.34198521e-26, -0.997747183, 1.36589833e-26, 1, 1.43685575e-26, 0.997747183, -1.45921503e-26, 0.06708657);
+	["ActivatorPart"] = CFrame.new(23.219741821289062, -5.170000076293945, 22.745763778686523) * CFrame.Angles(-1.4369233846664429, -0.8966454863548279, -1.4000829458236694);
+}
+
+
+local function checkCombos(tool)
+	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = cframes["Researcher"]
+	wait(0.5)
+	tool.Drop.RemoteEvent:FireServer(cframes["ActivatorPart"])
+
+	repeat wait(1) until string.find(workspace.HardStructures.Researcher.Screen.SurfaceGui.TextLabel.Text, "Data found")
+	wait(0.1)
+	local text = workspace.HardStructures.Researcher.Screen.SurfaceGui.TextLabel.Text
+
+	local combination_text = string.match(text, "combines with:(.*)")
+	if combination_text then
+		combination_text = string.gsub(combination_text, "combines with: ", "")
+		return combination_text
+	else
+		return "No combinations"
+	end
+end
+
+local checkedCubes = {}
+--]]
+local combotable = {
+	["2 Cube"] = "2 Cube";
+	["4 Cube"] = "4 Cube";
+	["8 Cube"] = "8 Cube";
+	["16 Cube"] = "16 Cube";
+	["32 Cube"] = "32 Cube";
+	["64 Cube"] = "64 Cube";
+	["Air Cube"] = "No combinations";
+	["Ash Cube"] = "No combinations";
+	["Armor Cube"] = "Blue Cube, Iron Cube, Red Cube, Yellow Cube, Wood Cube, Magenta Cube";
+	["Blue Cube"] = "Armor Cube, White Cube, Green Cube, Wooden Wall, Metal Wall, Forge Cube, Gold Cube, Stone Wall, Red Cube, Concrete Wall, Yellow Cube";
+	["Boots Cube"] = "Gold Cube, Cryoide Cube, Iron Cube, Pyrolite Cube";
+	["Bomb Cube"] = "Impact Cube";
+	["Chestplate Cube"] = "Gold Cube, Cryoide Cube, Iron Cube, Pyrolite Cube";
+	["Club"] = "Forge Cube, Spike";
+	["Caltrop"] = "Rusted Iron, Lava Cube";
+	["Concrete Cube"] = "Iron Cube";
+	["Cryoide Dust"] = "Gold, Cryoide Dust";
+	["Cryoide Crystal"] = "No combinations";
+	["Copper"] = "White Cube, Cyan Cube, Furnace";
+	["Copper Cube"] = "Iron Cube, Furnace";
+	["Cooled Lava Cube"] = "Goldplate Cube";
+	["Container Cube"] = "Wealth Cube";
+	["Cyan Cube"] = "Red Cube, Copper";
+	["Dirt Cube"] = "Water Cube, Wood Cube, Furnace";
+	["Explosive Cube"] = "Enrichment Cube, Lava Cube";
+	["Forge Cube"] = "Gold Cube, Iron Cube, Red Cube, Blue Cube, Iron, Club, Regen Cube";
+	["Flaming Caltrop"] = "No combinations";
+	["Flame Sword"] = "Frost Sword, Golden Sword";
+	["Frost Sword"] = "Flame Sword";
+	["Frostfire Sword"] = "No combinations";
+	["Flaming Club"] = "Golden Club";
+	["Fusion Coil"] = "No combinations";
+	["Gunpowder Cube"] = "Throwable Cube";
+	["Gold"] = "White Cube, Cryoide Dust, Furnace";
+	["Gold Chestplate"] = "No combinations";
+	["Gold Leggings"] = "No combinations";
+	["Gold Helmet"] = "No combinations";
+	["Goldfire Sword"] = "No combinations";
+	["Gold Cube"] = "Chestplate Cube, Blue Cube, Iron Cube, Reinforced Club, Forge Cube, Boots Cube, Helmet Cube, Sword, Leggings Cube, Furnace";
+	["Green Cube"] = "Blue Cube, Stone Wall, Red Cube, Metal Wall, Concrete Wall, Plate Cube, Wooden Wall, Magenta Cube";
+	["Gold Boots"] = "No combinations";
+	["Golden Club"] = "Flaming Club";
+	["Golden Sword"] = "Fiery Greatsword, Lava Cube, Ice Cube, Flame Sword";
+	["Glacier Cube"] = "Ice Sword, Lava Cube, Frozen Club, Ice Greatsword";
+	["Glacier Club"] = "Cryoide Cube";
+	["Hammer"] = "No combinations";
+	["Heavily Oxidised Copper"] = "Furnace, White Cube";
+	["Heavily Oxidised Copper Cube"] = "Furnace";
+	["Heavy Iron Helmet"] = "No combinations";
+	["Healer Cube"] = "Wealth Cube, Enrichment Cube";
+	["Heavy Iron Leggings"] = "No combinations";
+	["Heavy Iron Chestplate"] = "No combinations";
+	["Heavy Iron Shield"] = "Spiked Cube";
+	["Heavy Iron Boots"] = "No combinations";
+	["Helmet Cube"] = "Gold Cube, Cryoide Cube, Pyrolite Cube, Iron Cube";
+	["Ice Cube"] = "Water Cube, Iron Club, Golden Sword, Furnace";
+	["Iron"] = "Water Cube, White Cube, Red Cube, Furnace, Wood Cube, Forge Cube";
+	["Iron Boots"] = "Plate Cube, Spiked Cube";
+	["Iron Cube"] = "Chestplate Cube, Copper Cube, Boots Cube, Reinforced Club, Water Cube, Armor Cube, Wood Cube, Forge Cube, Gold Cube, Helmet Cube, Rock Cube, Concrete Cube, Leggings Cube, Furnace";
+	["Ice Sword"] = "Glacier Cube";
+	["Iron Leggings"] = "Spiked Cube, Plate Cube";
+	["Iron Helmet"] = "Plate Cube, Spiked Cube";
+	["Iron Shield"] = "Spiked Cube, Plate Cube";
+	["Iron Chestplate"] = "Plate Cube, Spiked Cube";
+	["Iron Greatsword"] = "No combinations";
+	["Lava Cube"] = "Explosive Cube, Golden Sword, Iron Club, Glacier Cube, Caltrop, Fiery Greatsword";
+	["Leggings Cube"] = "Gold Cube, Cryoide Cube, Iron Cube, Pyrolite Cube";
+	["Magenta Cube"] = "Armor Cube, Green Cube";
+	["Metal Barricade"] = "Plate Cube";
+	["Molten Sphere"] = "Rock Cube";
+	["Mud Cube"] = "Wet Sand Cube";
+	["Multi Cube"] = "No combinations";
+	["Pack Cube"] = "Plate Cube";
+	["Plate Cube"] = "Iron Chestplate, Wealth Cube, Wooden Barricade, Iron Leggings, Iron Shield, Spike, Iron Boots, Green Cube, Metal Barricade, Stone Barricade, Pack Cube, Spiked Iron Shield, Concrete Barricade, Iron Helmet";
+	["Pyrolite"] = "White Cube";
+	["Pyrolite Boots"] = "No combinations";
+	["Pyrolite Chestplate"] = "No combinations";
+	["Pyrolite Cube"] = "Chestplate Cube, Helmet Cube, Leggings Cube, Boots Cube";
+	["Pyrolite Helmet"] = "No combinations";
+	["Pyrolite Leggings"] = "No combinations";
+	["Red Cube"] = "Armor Cube, White Cube, Cyan Cube, Forge Cube, Wooden Wall, Metal Wall, Concrete Wall, Blue Cube, Stone Wall, Green Cube, Iron, Wood Cube";
+	["Regen Coil"] = "No combinations";
+	["Regen Cube"] = "Forge Cube";
+	["Reinforced Club"] = "Gold Cube, Iron Cube";
+	["Rock Cube"] = "Iron Cube, Molten Sphere, Steam Cube, Furnace";
+	["Rusty Caltrop"] = "No combinations";
+	["Rusted Iron"] = "Caltrop, White Cube, Furnace";
+	["Rusted Iron Cube"] = "Furnace";
+	["Sand Cube"] = "Water Cube, Furnace";
+	["Slightly Oxidised Copper"] = "Furnace, White Cube";
+	["Slightly Oxidised Copper Cube"] = "Furnace";
+	["Spike"] = "Club, Plate Cube";
+	["Spiked Cube"] = "Iron Chestplate, Heavy Iron Shield, Iron Leggings, Iron Helmet, Iron Shield, Iron Boots";
+	["Spiked Club"] = "No combinations";
+	["Spiked Iron Leggings"] = "No combinations";
+	["Spiked Iron Shield"] = "Plate Cube";
+	["Spiked Iron Chestplate"] = "No combinations";
+	["Steam Cube"] = "Rock Cube";
+	["Steel Sheet"] = "No combinations";
+	["Spiked Iron Boots"] = "No combinations";
+	["Stone Barricade"] = "Plate Cube";
+	["Sword"] = "Gold Cube";
+	["Speed Coil"] = "Gravity Coil";
+	["Trident"] = "No combinations";
+	["Throwable Cube"] = "Gunpowder Cube";
+	["Water Cube"] = "Sand Cube, Dirt Cube, Iron Cube, Ice Cube, Iron, Furnace";
+	["Wealth Cube"] = "Enricher, Plate Cube, Healer Cube, Container Cube";
+	["Wet Sand Cube"] = "Mud Cube";
+	["White Cube"] = "Pyrolite, Gold, Rusted Iron, Blue Cube, Slightly Oxidised Copper, Heavily Oxidised Copper, Red Cube, Iron, Copper, Cryoide";
+	["Wood Cube"] = "Armor Cube, Dirt Cube, Red Cube, Iron Cube, Iron";
+	["Wooden Barricade"] = "Plate Cube";
+	["Wooden Shield"] = "No combinations";
+	["Yellow Cube"] = "Armor Cube, Blue Cube";
+}
+
+
+game.Players.LocalPlayer.Character.ChildAdded:Connect(function(child)
+	if child:IsA("Tool") and combotable[child.Name] and combotable[child.Name] ~= "No combinations" then
+		for i,v in pairs(workspace.Cubes:GetChildren()) do 
+			local eachcube = string.split(combotable[child.Name], ", ")
+			if table.find(eachcube, v.Name) then
+				local highlight = game.Players.LocalPlayer.PlayerGui.Client.Client.Highlight:Clone()
+				highlight.Parent = v:FindFirstChildWhichIsA("Model")
+				highlight.Adornee = v:FindFirstChildWhichIsA("Model")
+				spawn(function()
+					repeat wait() until child.Parent ~= game.Players.LocalPlayer.Character 
+					highlight:Destroy()
+				end)
+			end
+		end
+		local eachcube = string.split(combotable[child.Name], ", ")
+		if table.find(eachcube, "Furnace") then
+			local highlight = game.Players.LocalPlayer.PlayerGui.Client.Client.Highlight:Clone()
+			highlight.Parent = workspace.HardStructures.Furnace
+			highlight.Adornee = workspace.HardStructures.Furnace
+			spawn(function()
+				repeat wait() until child.Parent ~= game.Players.LocalPlayer.Character 
+				highlight:Destroy()
+			end)
+		end
+	end
+end)
+
+
+--[[
+for i,v in pairs(workspace.Cubes:GetChildren()) do 
+	if not table.find(checkedCubes, v.Name) and not combotable[v.Name] then
+		table.insert(checkedCubes, v.Name)
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.Handle.CFrame
+		wait(0.5)
+		game:GetService("ReplicatedStorage").Events.PickUp:FireServer(v)
+		wait(0.5)
+		print("checking item: " .. v.Name)
+		setclipboard(v.Name)
+
+		setclipboard(checkCombos(v))
+		print("Done ----------------")
+		wait(1)
+	end
+end
+--]]
