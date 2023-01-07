@@ -26,6 +26,160 @@ end
 
 local checkedCubes = {}
 --]]
+local resulttable = {
+	["2 Cube"] = { { "Red Cube", "White Cube" } };
+	["Air Cube"] = { { "Blue Cube", "White Cube" } };
+	["Armor Cube"] = { { "Blue Cube", "Gold Cube" } };
+	["Backpack Cube"] = { { "Container Cube", "Wealth Cube" } };
+	["Bomb Cube"] = { { "Explosive Cube", "Lava Cube" } };
+	["Boots Cube"] = { { "Yellow Cube", "Armor Cube" } };
+	["Caltrop"] = { { "Cyan Cube", "Copper" } };
+	["Chestplate Cube"] = { { "Magenta Cube", "Armor Cube" } };
+	["Club"] = { { "Wood Cube", "Red Cube" } };
+	["Concrete Barricade"] = { { "Iron Cube", "Concrete Cube" } };
+	["Concrete Cube"] = { { "Mud Cube", "Wet Sand Cube" } };
+	["Concrete Door Wall"] = { { "Concrete Wall", "Blue Cube" } };
+	["Concrete Ladder Wall"] = { { "Concrete Wall", "Red Cube" } };
+	["Concrete Wall"] = { { "Concrete Barricade", "Plate Cube" } };
+	["Concrete Windowed Wall"] = { { "Concrete Wall", "Green Cube" } };
+	["Container Cube"] = { { "Pack Cube", "Plate Cube" } };
+	["Cooled Lava Cube"] = { { "Lava Cube", "Glacier Cube" } };
+	["Copper Cube"] = { { "Copper", "White Cube" } };
+	["Copper"] = { { "Dirt Cube", "Furnace" } };
+	["Cryoide Boots"] = { { "Boots Cube", "Cryoide Cube" } };
+	["Cryoide Chestplate"] = { { "Chestplate Cube", "Cryoide Cube" } };
+	["Cryoide Crystal"] = { { "Cryoide Dust", "Cryoide Dust" } };
+	["Cryoide Cube"] = { { "Cryoide", "White Cube" } };
+	["Cryoide Dust"] = { { "Cryoide Crystal", "Compressor" } };
+	["Cryoide Helmet"] = { { "Helmet Cube", "Cryoide Cube" } };
+	["Cryoide Leggings"] = { { "Leggings Cube", "Cryoide Cube" } };
+	["Cryoide"] = { { "Cryoide Dust", "Gold" } };
+	["Cyan Cube"] = { { "Blue Cube", "Green Cube" } };
+	["Enricher"] = { { "Cooled Lava Cube", "Goldplate Cube" } };
+	["Enrichment Cube"] = { { "Enricher", "Wealth Cube" } };
+	["Explosive Cube"] = { { "Throwable Cube", "Gunpowder Cube" } };
+	["Flame Sword"] = { { "Golden Sword", "Lava Cube" } };
+	["Flaming Caltrop"] = { { "Caltrop", "Lava Cube" } };
+	["Flaming Club"] = { { "Iron Club", "Lava Cube" } };
+	["Forge Cube"] = { { "Iron Cube", "Gold Cube" } };
+	["Frost Sword"] = { { "Ice Sword", "Glacier Cube" } };
+	["Frostfire Sword"] = { { "Frost Sword", "Flame Sword" } };
+	["Frozen Club"] = { { "Iron Club", "Ice Cube" } };
+	["Fusion Coil"] = { { "Gravity Coil", "Speed Coil" } };
+	["Glacier Club"] = { { "Frozen Club", "Glacier Cube" } };
+	["Glacier Cube"] = { { "Ice Cube", "Water Cube" } };
+	["Glacier Greatsword"] = { { "Ice Greatsword", "Glacier Cube" } };
+	["Gold Boots"] = { { "Boots Cube", "Gold Cube" } };
+	["Gold Chestplate"] = { { "Chestplate Cube", "Gold Cube" } };
+	["Gold Cube"] = { { "Gold", "White Cube" } };
+	["Gold Helmet"] = { { "Helmet Cube", "Gold Cube" } };
+	["Gold Leggings"] = { { "Leggings Cube", "Gold Cube" } };
+	["Gold"] = { { "Dirt Cube", "Furnace" } };
+	["Golden Club"] = { { "Reinforced Club", "Gold Cube" } };
+	["Golden Sword"] = { { "Sword", "Gold Cube" } };
+	["Goldfire Club"] = { { "Golden Club", "Flaming Club" } };
+	["Goldfire Greatsword"] = { { "Fiery Greatsword", "Gold Sword" } };
+	["Goldfire Sword"] = { { "Golden Sword", "Flame Sword" } };
+	["Goldplate Cube"] = { { "Plate Cube", "Wealth Cube" } };
+	["Gravity Coil"] = { { "Forge Cube", "Blue Cube" } };
+	["Gunpowder Cube"] = { { "Sand Cube", "Furnace" } };
+	["Hammer"] = { { "Wood Cube", "Iron" } };
+	["Healer Cube"] = { { "Green Cube", "Plate Cube" } };
+	["Heavily Oxidised Copper Cube"] = { { "Heavily Oxidised Copper", "White Cube" } };
+	["Heavy Iron Boots"] = { { "Iron Boots", "Plate Cube" } };
+	["Heavy Iron Chestplate"] = { { "Iron Chestplate", "Plate Cube" } };
+	["Heavy Iron Helmet"] = { { "Iron Helmet", "Plate Cube" } };
+	["Heavy Iron Leggings"] = { { "Iron Leggings", "Plate Cube" } };
+	["Heavy Iron Shield"] = { { "Iron Shield", "Plate Cube" } };
+	["Heavy Spiked Iron Shield"] = { { "Heavy Iron Shield", "Spiked Cube" }, { "Spiked Iron Shield", "Plate Cube" } };
+	["Helmet Cube"] = { { "Blue Cube", "Armor Cube" } };
+	["Ice Sword"] = { { "Golden Sword", "Ice Cube" } };
+	["Impact Bomb Cube"] = { { "Impact Cube", "Bomb Cube" } };
+	["Impact Cube"] = { { "Explosive Cube", "Enrichment Cube" } };
+	["Iron Boots"] = { { "Boots Cube", "Iron Cube" } };
+	["Iron Chestplate"] = { { "Chestplate Cube", "Iron Cube" } };
+	["Iron Club"] = { { "Reinforced Club", "Iron Cube" } };
+	["Iron Cube"] = { { "Iron", "White Cube" } };
+	["Iron Helmet"] = { { "Helmet Cube", "Iron Cube" } };
+	["Iron Leggings"] = { { "Leggings Cube", "Iron Cube" } };
+	["Iron Shield"] = { { "Iron Cube", "Armor Cube" } };
+	["Iron"] = { { "Dirt Cube", "Furnace" } };
+	["Lava Cube"] = { { "Molten Sphere", "Rock Cube" } };
+	["Lava Greatsword"] = { { "Fiery Greatsword", "Lava Cube" } };
+	["Leggings Cube"] = { { "Red Cube", "Armor Cube" } };
+	["Life Cube"] = { { "Healer Cube", "Enrichment Cube" } };
+	["Magenta Cube"] = { { "Red Cube", "Blue Cube" } };
+	["Metal Barricade"] = { { "Iron Cube", "Copper Cube" } };
+	["Metal Door Wall"] = { { "Metal Wall", "Blue Cube" } };
+	["Metal Ladder Wall"] = { { "Metal Wall", "Red Cube" } };
+	["Metal Wall"] = { { "Metal Barricade", "Plate Cube" } };
+	["Metal Window Wall"] = { { "Metal Wall", "Green Cube" } };
+	["Molten Sphere"] = { { "Rock Cube", "Furnace" }, { "Iron Cube", "Furnace" }, { "Iron", "Furnace" }, { "Gold Cube", "Furnace" }, { "Gold", "Furnace" }, { "Pyrolite Cube", "Furnace" }, { "Pyrolite", "Furnace" }, { "Cryoide Cube", "Furnace" }, { "Cryoide", "Furnace" }, { "Copper Cube", "Furnace" }, { "Copper", "Furnace" }, { "Slightly Oxidised Copper Cube", "Furnace" }, { "Slightly Oxidised Copper", "Furnace" }, { "Heavily Oxidised Copper Cube", "Furnace" }, { "Heavily Oxidised Copper", "Furnace" }  };
+	["Mud Cube"] = { { "Dirt Cube", "Water Cube" } };
+	["Pack Cube"] = { { "Dirt Cube", "Wood Cube" } };
+	["Permafrost Club"] = { { "Glacier Club", "Cryoide Cube" } };
+	["Plate Cube"] = { { "Forge Cube", "Iron Cube" } };
+	["Pyrolite Boots"] = { { "Boots Cube", "Pyrolite Cube" } };
+	["Pyrolite Chestplate"] = { { "Chestplate Cube", "Pyrolite Cube" } };
+	["Pyrolite Cube"] = { { "Pyrolite", "White Cube" } };
+	["Pyrolite Helmet"] = { { "Helmet Cube", "Pyrolite Cube" } };
+	["Pyrolite Leggings"] = { { "Leggings Cube", "Pyrolite Cube" } };
+	["Pyrolite"] = { { "Dirt Cube", "Furnace" } };
+	["Regen Coil"] = { { "Regen Cube", "Forge Cube" } };
+	["Regen Cube"] = { { "Healer Cube", "Wealth Cube" } };
+	["Reinforced Club"] = { { "Club", "Forge Cube" } };
+	["Rusted Iron Cube"] = { { "Rusted Iron", "White Cube" }, { "Iron Cube", "Water Cube" } };
+	["Rusted Iron"] = { { "Iron", "Water Cube" } };
+	["Rusty Caltrop"] = { { "Rusted Iron", "Caltrop" } };
+	["Sand Cube"] = { { "Steam Cube", "Rock Cube" } };
+	["Slightly Oxidised Copper Cube"] = { { "Slightly Oxidised Copper", "White Cube" } };
+	["Speed Coil"] = { { "Forge Cube", "Red Cube" } };
+	["Spiked Club"] = { { "Club", "Spike" } };
+	["Spiked Cube"] = { { "Plate Cube", "Spike" } };
+	["Spiked Iron Boots"] = { { "Iron Boots", "Spiked Cube" } };
+	["Spiked Iron Chestplate"] = { { "Iron Chestplate", "Spiked Cube" } };
+	["Spiked Iron Helmet"] = { { "Iron Helmet", "Spiked Cube" } };
+	["Spiked Iron Leggings"] = { { "Iron Leggings", "Spiked Cube" } };
+	["Spiked Iron Shield"] = { { "Iron Shield", "Spiked Cube" } };
+	["Steam Cube"] = { { "Water Cube", "Furnace" } };
+	["Steel Sheet"] = { { "", "" } };
+	["Stone Barricade"] = { { "Rock Cube", "Iron Cube" } };
+	["Stone Door Wall"] = { { "Stone Wall", "Blue Cube" } };
+	["Stone Stair Wall"] = { { "Stone Wall", "Red Cube" } };
+	["Stone Wall"] = { { "Stone Barricade", "Plate Cube" } };
+	["Stone Window Wall"] = { { "Stone Wall", "Green Cube" } };
+	["Sword"] = { { "Forge Cube", "Iron" } };
+	["The Final Club"] = { { "Permafrost Club", "Goldfire Club" } };
+	["Throwable Cube"] = { { "Iron", "Red Cube" } };
+	["Water Cube"] = { { "Ice Cube", "Furnace" } };
+	["Wealth Cube"] = { { "Forge Cube", "Gold Cube" } };
+	["Wet Sand Cube"] = { { "Sand Cube", "Water Cube" } };
+	["White Cube"] = { { "Blue Cube", "Yellow Cube" }, { "Green Cube", "Magenta Cube" }, { "Red Cube", "Cyan Cube" } };
+	["Wooden Barricade"] = { { "Wooden Cube", "Iron Cube" } };
+	["Wooden Door Wall"] = { { "Wooden Wall", "Blue Cube" } };
+	["Wooden Ladder Wall"] = { { "Wooden Wall", "Red Cube" } };
+	["Wooden Shield"] = { { "Wood Cube", "Armor Cube" } };
+	["Wooden Wall"] = { { "Wood Barricade", "Plate Cube" } };
+	["Wooden Window Wall"] = { { "Wooden Wall", "Green Cube" } };
+	["Yellow Cube"] = { { "Green Cube", "Red Cube" } };
+}
+
+function addnumbercubes(resulttable)
+	local number_cubes = {}
+	for i = 1, 16 do
+		local cube = tostring(2^i) .. " Cube"
+		table.insert(number_cubes, cube)
+	end
+
+	for i, cube in ipairs(number_cubes) do
+		if i ~= 1 then
+			resulttable[cube] = {{number_cubes[i-1], number_cubes[i-1]}}
+		end
+	end
+end
+
+addnumbercubes(resulttable)
+
 local combotable = {
 	["2 Cube"] = "2 Cube";
 	["4 Cube"] = "4 Cube";
@@ -34,66 +188,74 @@ local combotable = {
 	["32 Cube"] = "32 Cube";
 	["64 Cube"] = "64 Cube";
 	["Air Cube"] = "No combinations";
-	["Ash Cube"] = "No combinations";
 	["Armor Cube"] = "Blue Cube, Iron Cube, Red Cube, Yellow Cube, Wood Cube, Magenta Cube";
+	["Ash Cube"] = "No combinations";
 	["Blue Cube"] = "Armor Cube, White Cube, Green Cube, Wooden Wall, Metal Wall, Forge Cube, Gold Cube, Stone Wall, Red Cube, Concrete Wall, Yellow Cube";
-	["Boots Cube"] = "Gold Cube, Cryoide Cube, Iron Cube, Pyrolite Cube";
 	["Bomb Cube"] = "Impact Cube";
+	["Boots Cube"] = "Gold Cube, Cryoide Cube, Iron Cube, Pyrolite Cube";
+	["Caltrop"] = "Rusted Iron, Lava Cube";
 	["Chestplate Cube"] = "Gold Cube, Cryoide Cube, Iron Cube, Pyrolite Cube";
 	["Club"] = "Forge Cube, Spike";
-	["Caltrop"] = "Rusted Iron, Lava Cube";
 	["Concrete Cube"] = "Iron Cube";
-	["Cryoide Dust"] = "Gold, Cryoide Dust";
-	["Cryoide Crystal"] = "No combinations";
-	["Copper"] = "White Cube, Cyan Cube, Furnace";
-	["Copper Cube"] = "Iron Cube, Furnace";
-	["Cooled Lava Cube"] = "Goldplate Cube";
 	["Container Cube"] = "Wealth Cube";
+	["Cooled Lava Cube"] = "Goldplate Cube";
+	["Copper Cube"] = "Iron Cube, Furnace";
+	["Copper"] = "White Cube, Cyan Cube, Furnace";
+	["Cryoide Crystal"] = "No combinations";
+	["Cryoide Dust"] = "Gold, Cryoide Dust";
 	["Cyan Cube"] = "Red Cube, Copper";
 	["Dirt Cube"] = "Water Cube, Wood Cube, Furnace";
+	["Enricher"] = "Caltrop, White Cube, Furnace";
+	["Enrichment Cube"] = "Healer Cube, Explosive Cube";
 	["Explosive Cube"] = "Enrichment Cube, Lava Cube";
-	["Forge Cube"] = "Gold Cube, Iron Cube, Red Cube, Blue Cube, Iron, Club, Regen Cube";
-	["Flaming Caltrop"] = "No combinations";
+	["Fiery Greatsword"] = "Lava Cube, Golden Sword";
 	["Flame Sword"] = "Frost Sword, Golden Sword";
+	["Flaming Caltrop"] = "No combinations";
+	["Flaming Club"] = "Golden Club";
+	["Forge Cube"] = "Gold Cube, Iron Cube, Red Cube, Blue Cube, Iron, Club, Regen Cube";
 	["Frost Sword"] = "Flame Sword";
 	["Frostfire Sword"] = "No combinations";
-	["Flaming Club"] = "Golden Club";
 	["Fusion Coil"] = "No combinations";
-	["Gunpowder Cube"] = "Throwable Cube";
-	["Gold"] = "White Cube, Cryoide Dust, Furnace";
-	["Gold Chestplate"] = "No combinations";
-	["Gold Leggings"] = "No combinations";
-	["Gold Helmet"] = "No combinations";
-	["Goldfire Sword"] = "No combinations";
-	["Gold Cube"] = "Chestplate Cube, Blue Cube, Iron Cube, Reinforced Club, Forge Cube, Boots Cube, Helmet Cube, Sword, Leggings Cube, Furnace";
-	["Green Cube"] = "Blue Cube, Stone Wall, Red Cube, Metal Wall, Concrete Wall, Plate Cube, Wooden Wall, Magenta Cube";
+	["Glacier Club"] = "Cryoide Cube";
+	["Glacier Cube"] = "Ice Sword, Lava Cube, Frozen Club, Ice Greatsword";
 	["Gold Boots"] = "No combinations";
+	["Gold Chestplate"] = "No combinations";
+	["Gold Cube"] = "Chestplate Cube, Blue Cube, Iron Cube, Reinforced Club, Forge Cube, Boots Cube, Helmet Cube, Sword, Leggings Cube, Furnace";
+	["Gold Helmet"] = "No combinations";
+	["Gold Leggings"] = "No combinations";
+	["Gold"] = "White Cube, Cryoide Dust, Furnace";
 	["Golden Club"] = "Flaming Club";
 	["Golden Sword"] = "Fiery Greatsword, Lava Cube, Ice Cube, Flame Sword";
-	["Glacier Cube"] = "Ice Sword, Lava Cube, Frozen Club, Ice Greatsword";
-	["Glacier Club"] = "Cryoide Cube";
+	["Goldfire Club"] = "Permafrost Club";
+	["Goldfire Sword"] = "No combinations";
+	["Green Cube"] = "Blue Cube, Stone Wall, Red Cube, Metal Wall, Concrete Wall, Plate Cube, Wooden Wall, Magenta Cube";
+	["Gunpowder Cube"] = "Throwable Cube";
 	["Hammer"] = "No combinations";
-	["Heavily Oxidised Copper"] = "Furnace, White Cube";
-	["Heavily Oxidised Copper Cube"] = "Furnace";
-	["Heavy Iron Helmet"] = "No combinations";
 	["Healer Cube"] = "Wealth Cube, Enrichment Cube";
-	["Heavy Iron Leggings"] = "No combinations";
-	["Heavy Iron Chestplate"] = "No combinations";
-	["Heavy Iron Shield"] = "Spiked Cube";
+	["Heavily Oxidised Copper Cube"] = "Furnace";
+	["Heavily Oxidised Copper"] = "Furnace, White Cube";
 	["Heavy Iron Boots"] = "No combinations";
+	["Heavy Iron Chestplate"] = "No combinations";
+	["Heavy Iron Helmet"] = "No combinations";
+	["Heavy Iron Leggings"] = "No combinations";
+	["Heavy Iron Shield"] = "Spiked Cube";
 	["Helmet Cube"] = "Gold Cube, Cryoide Cube, Pyrolite Cube, Iron Cube";
 	["Ice Cube"] = "Water Cube, Iron Club, Golden Sword, Furnace";
-	["Iron"] = "Water Cube, White Cube, Red Cube, Furnace, Wood Cube, Forge Cube";
-	["Iron Boots"] = "Plate Cube, Spiked Cube";
-	["Iron Cube"] = "Chestplate Cube, Copper Cube, Boots Cube, Reinforced Club, Water Cube, Armor Cube, Wood Cube, Forge Cube, Gold Cube, Helmet Cube, Rock Cube, Concrete Cube, Leggings Cube, Furnace";
 	["Ice Sword"] = "Glacier Cube";
-	["Iron Leggings"] = "Spiked Cube, Plate Cube";
-	["Iron Helmet"] = "Plate Cube, Spiked Cube";
-	["Iron Shield"] = "Spiked Cube, Plate Cube";
+	["Impact Cube"] = "Bomb Cube";
+	["Iron Boots"] = "Plate Cube, Spiked Cube";
 	["Iron Chestplate"] = "Plate Cube, Spiked Cube";
+	["Iron Club"] = "Ice Cube, Lava Cube";
+	["Iron Cube"] = "Chestplate Cube, Copper Cube, Boots Cube, Reinforced Club, Water Cube, Armor Cube, Wood Cube, Forge Cube, Gold Cube, Helmet Cube, Rock Cube, Concrete Cube, Leggings Cube, Furnace";
 	["Iron Greatsword"] = "No combinations";
+	["Iron Helmet"] = "Plate Cube, Spiked Cube";
+	["Iron Leggings"] = "Spiked Cube, Plate Cube";
+	["Iron Shield"] = "Spiked Cube, Plate Cube";
+	["Iron"] = "Water Cube, White Cube, Red Cube, Furnace, Wood Cube, Forge Cube";
 	["Lava Cube"] = "Explosive Cube, Golden Sword, Iron Club, Glacier Cube, Caltrop, Fiery Greatsword";
+	["Lava Greatsword"] = "No combinations";
 	["Leggings Cube"] = "Gold Cube, Cryoide Cube, Iron Cube, Pyrolite Cube";
+	["Life Cube"] = "No combinations";
 	["Magenta Cube"] = "Armor Cube, Green Cube";
 	["Metal Barricade"] = "Plate Cube";
 	["Molten Sphere"] = "Rock Cube";
@@ -101,37 +263,38 @@ local combotable = {
 	["Multi Cube"] = "No combinations";
 	["Pack Cube"] = "Plate Cube";
 	["Plate Cube"] = "Iron Chestplate, Wealth Cube, Wooden Barricade, Iron Leggings, Iron Shield, Spike, Iron Boots, Green Cube, Metal Barricade, Stone Barricade, Pack Cube, Spiked Iron Shield, Concrete Barricade, Iron Helmet";
-	["Pyrolite"] = "White Cube";
 	["Pyrolite Boots"] = "No combinations";
 	["Pyrolite Chestplate"] = "No combinations";
 	["Pyrolite Cube"] = "Chestplate Cube, Helmet Cube, Leggings Cube, Boots Cube";
 	["Pyrolite Helmet"] = "No combinations";
 	["Pyrolite Leggings"] = "No combinations";
+	["Pyrolite"] = "White Cube";
 	["Red Cube"] = "Armor Cube, White Cube, Cyan Cube, Forge Cube, Wooden Wall, Metal Wall, Concrete Wall, Blue Cube, Stone Wall, Green Cube, Iron, Wood Cube";
 	["Regen Coil"] = "No combinations";
 	["Regen Cube"] = "Forge Cube";
 	["Reinforced Club"] = "Gold Cube, Iron Cube";
 	["Rock Cube"] = "Iron Cube, Molten Sphere, Steam Cube, Furnace";
-	["Rusty Caltrop"] = "No combinations";
-	["Rusted Iron"] = "Caltrop, White Cube, Furnace";
 	["Rusted Iron Cube"] = "Furnace";
+	["Rusted Iron"] = "Caltrop, White Cube, Furnace";
+	["Rusty Caltrop"] = "No combinations";
 	["Sand Cube"] = "Water Cube, Furnace";
-	["Slightly Oxidised Copper"] = "Furnace, White Cube";
 	["Slightly Oxidised Copper Cube"] = "Furnace";
+	["Slightly Oxidised Copper"] = "Furnace, White Cube";
+	["Speed Coil"] = "Gravity Coil";
 	["Spike"] = "Club, Plate Cube";
-	["Spiked Cube"] = "Iron Chestplate, Heavy Iron Shield, Iron Leggings, Iron Helmet, Iron Shield, Iron Boots";
 	["Spiked Club"] = "No combinations";
+	["Spiked Cube"] = "Iron Chestplate, Heavy Iron Shield, Iron Leggings, Iron Helmet, Iron Shield, Iron Boots";
+	["Spiked Iron Boots"] = "No combinations";
+	["Spiked Iron Chestplate"] = "No combinations";
+	["Spiked Iron Helmet"] = "No combinations";
 	["Spiked Iron Leggings"] = "No combinations";
 	["Spiked Iron Shield"] = "Plate Cube";
-	["Spiked Iron Chestplate"] = "No combinations";
 	["Steam Cube"] = "Rock Cube";
 	["Steel Sheet"] = "No combinations";
-	["Spiked Iron Boots"] = "No combinations";
 	["Stone Barricade"] = "Plate Cube";
 	["Sword"] = "Gold Cube";
-	["Speed Coil"] = "Gravity Coil";
-	["Trident"] = "No combinations";
 	["Throwable Cube"] = "Gunpowder Cube";
+	["Trident"] = "No combinations";
 	["Water Cube"] = "Sand Cube, Dirt Cube, Iron Cube, Ice Cube, Iron, Furnace";
 	["Wealth Cube"] = "Enricher, Plate Cube, Healer Cube, Container Cube";
 	["Wet Sand Cube"] = "Mud Cube";
@@ -143,17 +306,76 @@ local combotable = {
 }
 
 
+
+function combine(cube1, cube2)
+	for k, v in pairs(resulttable) do
+		for i, j in pairs(v) do
+			if (j[1] == cube1 and j[2] == cube2) or (j[1] == cube2 and j[2] == cube1) then
+				return k
+			end
+		end
+	end
+	return "Invalid combination"
+end
+
+local function Label(part, comboname)
+
+	local billboardInstance = Instance.new("BillboardGui")		
+	billboardInstance.Parent = part
+	billboardInstance.Name = "Label"
+	if part.Name == "Furnace" then
+		billboardInstance.StudsOffset = Vector3.new(0,-2,0)
+	else
+		billboardInstance.StudsOffset = Vector3.new(0,2,0)
+	end
+	billboardInstance.Size = UDim2.new(0,200,0,50)
+	billboardInstance.AlwaysOnTop = true
+
+
+	local frame = Instance.new("Frame", billboardInstance)
+	frame.BackgroundTransparency = 1
+	frame.Size = UDim2.new(0,200,0,50)
+
+	local uilist = Instance.new("UIListLayout", frame)
+
+	local textLabel = Instance.new("TextLabel", frame)
+	textLabel.BackgroundTransparency = 1
+	textLabel.Font = Enum.Font.SourceSans
+	textLabel.Size = UDim2.new(1,0,0,10)
+	textLabel.Text = '<font color="rgb(255,200,0)"><b><i>' .. comboname .. '</i></b></font>'
+	textLabel.TextSize = 28
+	textLabel.RichText = true
+	textLabel.TextColor3 = Color3.fromRGB(200,0,0)
+	textLabel.TextStrokeColor3 = Color3.fromRGB(0,0,0)
+	textLabel.TextStrokeTransparency = 0
+
+	local textLabel = Instance.new("TextLabel", frame)
+	textLabel.BackgroundTransparency = 1
+	textLabel.Font = Enum.Font.SourceSans
+	textLabel.Size = UDim2.new(1,0,0,30)
+	textLabel.Text = '<font color="rgb(255,255,255)"><b>' .. part.Name .. '</b></font>'
+	textLabel.TextSize = 18
+	textLabel.RichText = true
+	textLabel.TextColor3 = Color3.fromRGB(200,0,0)
+	textLabel.TextStrokeColor3 = Color3.fromRGB(0,0,0)
+	textLabel.TextStrokeTransparency = 0
+end
+
 game.Players.LocalPlayer.Character.ChildAdded:Connect(function(child)
 	if child:IsA("Tool") and combotable[child.Name] and combotable[child.Name] ~= "No combinations" then
 		for i,v in pairs(workspace.Cubes:GetChildren()) do 
 			local eachcube = string.split(combotable[child.Name], ", ")
 			if table.find(eachcube, v.Name) then
-				local highlight = game.Players.LocalPlayer.PlayerGui.Client.Client.Highlight:Clone()
-				highlight.Parent = v:FindFirstChildWhichIsA("Model")
-				highlight.Adornee = v:FindFirstChildWhichIsA("Model")
+				local highlight = Instance.new("Highlight", v:FindFirstChildWhichIsA("Model")) --game.Players.LocalPlayer.PlayerGui.Client.Client.Highlight:Clone()
+				highlight.Adornee = highlight.Parent
+				highlight.FillTransparency = 1
+				highlight.OutlineColor = Color3.fromRGB(255,200,0)
+				local result = combine(child.Name, v.Name)
+				Label(v:FindFirstChildWhichIsA("Model"), result)
 				spawn(function()
 					repeat wait() until child.Parent ~= game.Players.LocalPlayer.Character 
 					highlight:Destroy()
+					v:FindFirstChildWhichIsA("Model"):FindFirstChild("Label"):Destroy()
 				end)
 			end
 		end
@@ -162,9 +384,17 @@ game.Players.LocalPlayer.Character.ChildAdded:Connect(function(child)
 			local highlight = game.Players.LocalPlayer.PlayerGui.Client.Client.Highlight:Clone()
 			highlight.Parent = workspace.HardStructures.Furnace
 			highlight.Adornee = workspace.HardStructures.Furnace
+			highlight.OutlineColor = Color3.fromRGB(255,200,0)
+			local result = combine(child.Name, "Furnace")
+			if result == "Gold" or result == "Iron" or result == "Copper" then
+				Label(workspace.HardStructures.Furnace, "Ingot")
+			else
+				Label(workspace.HardStructures.Furnace, result)
+			end
 			spawn(function()
 				repeat wait() until child.Parent ~= game.Players.LocalPlayer.Character 
 				highlight:Destroy()
+				workspace.HardStructures.Furnace:FindFirstChild("Label"):Destroy()
 			end)
 		end
 	end
