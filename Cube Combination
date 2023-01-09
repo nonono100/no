@@ -1,31 +1,4 @@
 
---[[
-local cframes = {
-	["Researcher"] = CFrame.new(16.7646713, -3.00000072, 21.9856625, 0.06708657, 1.34198521e-26, -0.997747183, 1.36589833e-26, 1, 1.43685575e-26, 0.997747183, -1.45921503e-26, 0.06708657);
-	["ActivatorPart"] = CFrame.new(23.219741821289062, -5.170000076293945, 22.745763778686523) * CFrame.Angles(-1.4369233846664429, -0.8966454863548279, -1.4000829458236694);
-}
-
-
-local function checkCombos(tool)
-	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = cframes["Researcher"]
-	wait(0.5)
-	tool.Drop.RemoteEvent:FireServer(cframes["ActivatorPart"])
-
-	repeat wait(1) until string.find(workspace.HardStructures.Researcher.Screen.SurfaceGui.TextLabel.Text, "Data found")
-	wait(0.1)
-	local text = workspace.HardStructures.Researcher.Screen.SurfaceGui.TextLabel.Text
-
-	local combination_text = string.match(text, "combines with:(.*)")
-	if combination_text then
-		combination_text = string.gsub(combination_text, "combines with: ", "")
-		return combination_text
-	else
-		return "No combinations"
-	end
-end
-
-local checkedCubes = {}
---]]
 local resulttable = {
 	["2 Cube"] = { { "Red Cube", "White Cube" } };
 	["Air Cube"] = { { "Blue Cube", "White Cube" } };
@@ -114,7 +87,7 @@ local resulttable = {
 	["Metal Ladder Wall"] = { { "Metal Wall", "Red Cube" } };
 	["Metal Wall"] = { { "Metal Barricade", "Plate Cube" } };
 	["Metal Window Wall"] = { { "Metal Wall", "Green Cube" } };
-	["Molten Sphere"] = { { "Rock Cube", "Furnace" }, { "Iron Cube", "Furnace" }, { "Iron", "Furnace" }, { "Gold Cube", "Furnace" }, { "Gold", "Furnace" }, { "Pyrolite Cube", "Furnace" }, { "Pyrolite", "Furnace" }, { "Cryoide Cube", "Furnace" }, { "Cryoide", "Furnace" }, { "Copper Cube", "Furnace" }, { "Copper", "Furnace" }, { "Slightly Oxidised Copper Cube", "Furnace" }, { "Slightly Oxidised Copper", "Furnace" }, { "Heavily Oxidised Copper Cube", "Furnace" }, { "Heavily Oxidised Copper", "Furnace" }  };
+	["Molten Sphere"] = { { "Rock Cube", "Furnace" }, { "Iron Cube", "Furnace" }, { "Iron", "Furnace" }, { "Rusted Iron Cube", "Furnace" }, { "Gold Cube", "Furnace" }, { "Gold", "Furnace" }, { "Pyrolite Cube", "Furnace" }, { "Pyrolite", "Furnace" }, { "Cryoide Cube", "Furnace" }, { "Cryoide", "Furnace" }, { "Copper Cube", "Furnace" }, { "Copper", "Furnace" }, { "Slightly Oxidised Copper Cube", "Furnace" }, { "Slightly Oxidised Copper", "Furnace" }, { "Heavily Oxidised Copper Cube", "Furnace" }, { "Heavily Oxidised Copper", "Furnace" }  };
 	["Mud Cube"] = { { "Dirt Cube", "Water Cube" } };
 	["Pack Cube"] = { { "Dirt Cube", "Wood Cube" } };
 	["Permafrost Club"] = { { "Glacier Club", "Cryoide Cube" } };
@@ -155,7 +128,7 @@ local resulttable = {
 	["Wealth Cube"] = { { "Forge Cube", "Gold Cube" } };
 	["Wet Sand Cube"] = { { "Sand Cube", "Water Cube" } };
 	["White Cube"] = { { "Blue Cube", "Yellow Cube" }, { "Green Cube", "Magenta Cube" }, { "Red Cube", "Cyan Cube" } };
-	["Wooden Barricade"] = { { "Wooden Cube", "Iron Cube" } };
+	["Wooden Barricade"] = { { "Wood Cube", "Iron Cube" } };
 	["Wooden Door Wall"] = { { "Wooden Wall", "Blue Cube" } };
 	["Wooden Ladder Wall"] = { { "Wooden Wall", "Red Cube" } };
 	["Wooden Shield"] = { { "Wood Cube", "Armor Cube" } };
@@ -163,22 +136,6 @@ local resulttable = {
 	["Wooden Window Wall"] = { { "Wooden Wall", "Green Cube" } };
 	["Yellow Cube"] = { { "Green Cube", "Red Cube" } };
 }
-
-function addnumbercubes(resulttable)
-	local number_cubes = {}
-	for i = 1, 16 do
-		local cube = tostring(2^i) .. " Cube"
-		table.insert(number_cubes, cube)
-	end
-
-	for i, cube in ipairs(number_cubes) do
-		if i ~= 1 then
-			resulttable[cube] = {{number_cubes[i-1], number_cubes[i-1]}}
-		end
-	end
-end
-
-addnumbercubes(resulttable)
 
 local combotable = {
 	["2 Cube"] = "2 Cube";
@@ -401,20 +358,185 @@ game.Players.LocalPlayer.Character.ChildAdded:Connect(function(child)
 end)
 
 
---[[
-for i,v in pairs(workspace.Cubes:GetChildren()) do 
-	if not table.find(checkedCubes, v.Name) and not combotable[v.Name] then
-		table.insert(checkedCubes, v.Name)
-		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.Handle.CFrame
-		wait(0.5)
-		game:GetService("ReplicatedStorage").Events.PickUp:FireServer(v)
-		wait(0.5)
-		print("checking item: " .. v.Name)
-		setclipboard(v.Name)
 
-		setclipboard(checkCombos(v))
-		print("Done ----------------")
-		wait(1)
+
+local function create_button(parent, text, callback)
+	local button = Instance.new("TextButton")
+	button.Parent = parent
+	button.Size = UDim2.new(0, 100, 0, 20)
+	button.RichText = true
+	button.Text = '<i><b>' .. text .. '</b></i>'
+	button.MouseButton1Click:Connect(callback)
+	return button
+end
+
+local function create_label(parent, text)
+	local label = Instance.new("TextLabel")
+	label.Parent = parent
+	label.Size = UDim2.new(0, 100, 0, 20)
+	label.RichText = true
+	label.Text = '<i><b>' .. text .. '</b></i>'
+	return label
+end
+
+local current_page = 0
+local pages = {}
+local function go_back_to_row(row_number)
+	for i = row_number + 1, #pages do
+		for _, element in pairs(pages[i]) do
+			element:Destroy()
+		end
+		pages[i] = nil
 	end
 end
---]]
+
+local function get_page_number(button)
+	for i, page in ipairs(pages) do
+		for _, element in pairs(page) do
+			if element == button then
+				return i
+			end
+		end
+	end
+	return nil
+end
+
+local function create_combination_buttons(parent, ingredient)
+	local page = {}
+	local recipe = parent:FindFirstChild("Recipe")
+	if recipe then
+		for _, child in pairs(recipe:GetChildren()) do
+			child:Destroy()
+		end
+	end
+	local button1, button2
+	local label1, label2
+
+	local recipes = resulttable[ingredient]
+	local random_index = math.random(1, #recipes)
+	local v = recipes[random_index]
+	if resulttable[v[1]] then
+		button1 = create_button(parent, v[1], function()
+			local pagenumber = get_page_number(button1)
+			local pageindex = pages[pagenumber]
+			for _, element in pairs(page) do
+				if element:IsA("TextButton") and element ~= button1 then
+					element.TextColor3 = Color3.fromRGB(27, 42, 53)
+				end
+			end
+			go_back_to_row(pagenumber)
+			create_combination_buttons(parent, v[1])
+		end)
+		button1.Name = ingredient .. "1"
+		button1.Position = UDim2.new(0, 0, 0, #pages * 30)
+		button1.MouseButton1Click:Connect(function()
+			button1.TextColor3 = Color3.fromRGB(165, 2, 2)
+		end)
+		table.insert(page, button1)
+	else
+		label1 = create_label(parent, v[1])
+		label1.Name = ingredient .. "1"
+		label1.Position = UDim2.new(0, 0, 0, #pages * 30)
+		table.insert(page, label1)
+	end
+	if resulttable[v[2]] then
+		button2 = create_button(parent, v[2], function()
+			local pagenumber = get_page_number(button2)
+			local pageindex = pages[pagenumber]
+			for _, element in pairs(page) do
+				if element:IsA("TextButton") and element ~= button2 then
+					element.TextColor3 = Color3.fromRGB(27, 42, 53)
+				end
+			end
+			go_back_to_row(pagenumber)
+			create_combination_buttons(parent, v[2])
+		end)
+		button2.Name = ingredient .. "2"
+		button2.Position = UDim2.new(0, 110, 0, #pages * 30)
+		button2.MouseButton1Click:Connect(function()
+			button2.TextColor3 = Color3.fromRGB(165, 2, 2)
+		end)
+		table.insert(page, button2)
+	else
+		label2 = create_label(parent, v[2])
+		label2.Name = ingredient .. "2"
+		label2.Position = UDim2.new(0, 110, 0, #pages * 30)
+		table.insert(page, label2)
+	end
+	table.insert(pages, page)
+end
+
+local function create_scrollable_list_of_buttons(parent, buttons)
+	local list = Instance.new("ScrollingFrame")
+	list.Parent = parent
+	list.Size = UDim2.new(0, 220, 0, 300)
+	list.CanvasSize = UDim2.new(0, 0, 0, #buttons * 20)
+	list.ScrollBarThickness = 5
+	local selected_button = nil
+	local y = 0
+
+	local textLabel = Instance.new("TextLabel")
+	textLabel.Parent = parent
+	textLabel.Size = UDim2.new(1, 0, 0, 20)
+	textLabel.Position = UDim2.new(0, 0, 0, -20)
+	textLabel.RichText = true
+	textLabel.Text = '<b><i>Recipe Book</i></b>'
+	textLabel.TextXAlignment = "Center"
+	textLabel.TextYAlignment = "Center"
+	textLabel.Font = Enum.Font.SourceSans
+	textLabel.TextSize = 18
+	textLabel.TextColor3 = Color3.fromRGB(165, 2, 2)
+
+	for i, button_text in ipairs(buttons) do
+		local button = Instance.new("TextButton")
+		button.Name = "Item"
+		button.Parent = list
+		button.Size = UDim2.new(1, 0, 0, 20)
+		button.Position = UDim2.new(0, 0, 0, y)
+		button.RichText = true
+		button.Text = '<b>' .. button_text .. '</b>'
+		button.MouseButton1Click:Connect(function()
+			if selected_button == button then
+				selected_button.TextColor3 = Color3.fromRGB(27, 42, 53)
+				selected_button = nil
+				if parent:FindFirstChild("Recipe") then
+					parent.Recipe:Destroy()
+					current_page = 0
+					pages = {}
+				end
+			else
+				if parent:FindFirstChild("Recipe") then
+					parent.Recipe:Destroy()
+					current_page = 0
+					pages = {}
+				end
+				if selected_button ~= nil then
+					selected_button.TextColor3 = Color3.fromRGB(27, 42, 53)
+				end
+				selected_button = button
+				button.TextColor3 = Color3.fromRGB(165, 2, 2)
+				local recipe_tree_frame = Instance.new("Frame")
+				recipe_tree_frame.Parent = parent
+				recipe_tree_frame.Name = "Recipe"
+				recipe_tree_frame.Size = UDim2.new(0, 220, 0, 300)
+				recipe_tree_frame.Position = UDim2.new(0, 220, 0, 0)
+				create_combination_buttons(recipe_tree_frame, button_text)
+			end
+		end)
+		y = y + 20
+	end
+end
+
+local screenGui = Instance.new("ScreenGui", game.Players.LocalPlayer:WaitForChild("PlayerGui"))
+local main_frame = Instance.new("Frame", screenGui)
+main_frame.Name = "Main"
+main_frame.Size = UDim2.new(0, 220, 0, 300)
+main_frame.Position = UDim2.new(0.05, 0,0.12, 0)
+
+local craftable_items = {}
+for item, _ in pairs(resulttable) do
+	table.insert(craftable_items, item)
+end
+table.sort(craftable_items, function(a, b) return a < b end)
+
+create_scrollable_list_of_buttons(main_frame, craftable_items)
