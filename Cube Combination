@@ -540,3 +540,77 @@ end
 table.sort(craftable_items, function(a, b) return a < b end)
 
 create_scrollable_list_of_buttons(main_frame, craftable_items)
+
+--[[
+local redcubes = {}
+local whitecubes = {}
+
+while wait() do 
+	for i,v in pairs(workspace.Cubes:GetChildren()) do 
+		if v.Name == "Red Cube" and not table.find(redcubes, v) then
+			wait(0.1)
+			table.insert(redcubes, v)
+		end
+		if v.Name == "White Cube" and not table.find(whitecubes, v) then
+			wait(0.1)
+			table.insert(whitecubes, v)
+		end
+	end
+local number_cubes = {}
+	for i, v in pairs(workspace.Cubes:GetChildren()) do
+		if string.match(v.Name, " Cube$") then
+			local value = string.match(v.Name, "(%d+) Cube$")
+			if value ~= nil then
+				if number_cubes[value] == nil then
+					number_cubes[value] = {}
+				end
+				table.insert(number_cubes[value], v)
+			end
+		end
+	end
+	local combined = false
+	for value, cubes in pairs(number_cubes) do
+		if #cubes >= 2 then
+			local cube1 = cubes[1]
+			local cube2 = cubes[2]
+			table.remove(cubes, 1)
+			table.remove(cubes, 1)
+
+			local success, message = pcall(function()
+				game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = cube1.Handle.CFrame
+				wait(0.3)
+				game:GetService("ReplicatedStorage").Events.PickUp:FireServer(cube1)
+				wait(0.3)
+				game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = cube2.Handle.CFrame
+				wait(0.3)
+				game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Tool").Drop.RemoteEvent:FireServer(cube2.Handle.CFrame)
+				wait(0.3)
+			end)
+			if not success then
+				print(message)
+			end
+			combined = true
+			break
+		end
+	end
+	if not combined and #redcubes >= 1 and #whitecubes >= 1 then
+		local cubered = redcubes[math.random(1, #redcubes)]
+		local cubewhite = whitecubes[math.random(1, #whitecubes)]
+		table.remove(redcubes, table.find(redcubes, cubered))
+		table.remove(whitecubes, table.find(whitecubes, cubewhite))
+		local success, message = pcall(function()
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = cubered.Handle.CFrame
+			wait(0.3)
+			game:GetService("ReplicatedStorage").Events.PickUp:FireServer(cubered)
+			wait(0.3)
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = cubewhite.Handle.CFrame
+			wait(0.3)
+			game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Tool").Drop.RemoteEvent:FireServer(cubewhite.Handle.CFrame)
+			wait(0.3)
+		end)
+		if not success then
+			print(message)
+		end
+	end
+end
+--]]
