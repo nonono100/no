@@ -32,3 +32,11 @@ for i,v in pairs(codes) do
 game:GetService("ReplicatedStorage").RedeemCode:InvokeServer(v)
 wait(0.5)
     end
+
+----
+
+for i,v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.SomeEmotes.actions.Lists:GetDescendants()) do 
+    if v:IsA("TextButton") and v.Visible == false then
+        v.Visible = true
+        end
+    end
