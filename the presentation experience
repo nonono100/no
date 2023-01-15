@@ -1,0 +1,34 @@
+
+local codes = {
+    "bookworm";
+    "nootnoot";
+    "itsaboutdriveitsaboutpower";
+    "5gems";
+    "emotionaldamage";
+    "uwu";
+    "minimalgamespro";
+    "pencil";
+    "megaboost";
+    "hallway";
+    "toilet";
+    "azureoptix";
+    "helicopter";
+    "rat";
+    "code";
+    "teachermadcuzbad";
+    "nikkocoder";
+    "poop";
+    "therearenootherteachersintheschoolbecausenobodywantstoseethebadteacher";
+    "10points";
+    "fartyreward";
+    "flood";
+    "funnybackrooms";
+    "christmas2022";
+    "christmasgift";
+    "manfacepooper";
+    "maxwellgood";
+    }
+for i,v in pairs(codes) do 
+game:GetService("ReplicatedStorage").RedeemCode:InvokeServer(v)
+wait(0.5)
+    end
