@@ -176,7 +176,7 @@ tab.Toggle({
 	Menu = {
 	    Info = function(self)
 	        main.Banner({
-	            Text = "Shows the next player or crate when the round begins. Also If you are chosen and leave immediately you can still lose your cash"
+	            Text = "Shows the next player or crate when the round begins. If you are chosen and leave immediately you can still lose your cash"
 	        })
 	        end
 	}
