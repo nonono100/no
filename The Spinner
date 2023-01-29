@@ -1,0 +1,196 @@
+local Material = loadstring(game:HttpGet("https://raw.githubusercontent.com/nonono100/no/main/UI"))()
+local Notification = loadstring(game:HttpGet("https://api.irisapp.ca/Scripts/IrisBetterNotifications.lua"))()
+repeat wait(0.1) until game.Players and game.Players.LocalPlayer 
+getgenv()["IrisAd"] = true
+local function notify(text)
+	local font = Enum.Font.SourceSansBold 
+	if text == "Crate" then 
+		font = Enum.Font.SourceSansLight 
+	end
+	Notification.Notify("Next Player", text, "", {
+		Duration = 10,  
+		TitleSettings = {
+			BackgroundColor3 = Color3.fromRGB(200, 200 ,200),
+			TextColor3 = Color3.fromRGB(255,255,255),
+			TextScaled = true,
+			TextWrapped = true,
+			TextSize = 14,
+			Font = Enum.Font.SourceSansBold,
+			TextXAlignment = Enum.TextXAlignment.Left,
+			TextYAlignment = Enum.TextYAlignment.Center
+		},
+		DescriptionSettings = {
+			BackgroundColor3 = Color3.fromRGB(125,125,125),
+			TextColor3 = Color3.fromRGB(205,205,205),
+			TextScaled = true,
+			TextWrapped = true,
+			TextSize = 14,
+			Font = font,
+			TextXAlignment = Enum.TextXAlignment.Left,
+			TextYAlignment = Enum.TextYAlignment.Top,
+		},
+		GradientSettings = {
+			GradientEnabled = false,
+			SolidColorEnabled = true,
+			SolidColor = Color3.fromRGB(255,106,0), --255,106,0
+			Retract = true,
+			Extend = false,
+		},
+		Main = {
+			BorderColor3 = Color3.fromRGB(255,106,0),
+			BackgroundColor3 = Color3.fromRGB(30, 30, 30),
+			BackgroundTransparency = 0.15,
+			Rounding = false,
+		}
+	});
+end
+
+local vote = game:GetService("ReplicatedStorage").Remotes.Vote
+getgenv().autovote = true
+getgenv().showghosts = false
+vote.OnClientEvent:Connect(function(p1,p2,p3)
+	if getgenv().autovote == true then
+		pcall(function()
+			wait(1)
+			vote:FireServer(p2.Name, 1)
+		end)
+	end
+end)
+local function showghosts(on)
+	for i,v in pairs(game.CollectionService:GetTagged("Ghost")) do 
+		if v.Name ~= game.Players.LocalPlayer.Name then
+			v.Humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.Viewer
+			for i,p in pairs(v:GetDescendants()) do 
+				if p:IsA("BasePart") or p:IsA("MeshPart") then
+					p.Color = Color3.fromRGB(166, 236, 255);
+					p.Material = Enum.Material.ForceField;
+					if on == true then
+						p.Transparency = p:GetAttribute("OriginalTrans") and 0
+					else
+						p.Transparency = 1
+					end
+				end
+			end
+		end
+	end
+end
+spawn(function()
+	while wait(5) do 
+		if getgenv().showghosts == true then
+			showghosts(true)
+		else
+			showghosts(false)
+		end
+	end
+end)
+
+
+local closestPart
+
+local function checkDistance(part)
+	if part then
+		local distance = (part.Position - workspace.Chamber.Main.Position).magnitude
+		if distance < closestDistance then
+			closestDistance = distance
+			closestPart = part
+		end
+	end
+end
+
+local function printplayer(spinner)
+	closestDistance = math.huge
+	closestPart = nil
+	for _, descendant in pairs(spinner:GetDescendants()) do
+		if descendant.Name == "Board" then
+			checkDistance(descendant)
+		end
+	end
+
+	for _, descendant in pairs(workspace:GetDescendants()) do
+		if descendant.Name == "Crate" and descendant:FindFirstChild("RootPart") then
+			checkDistance(descendant.RootPart)
+		end
+	end
+
+	if closestPart then
+		if closestPart.Name == "Board" and closestPart.SurfaceGui.Frame.Username.Text ~= "" then
+			notify(closestPart.SurfaceGui.Frame.Username.Text)
+		else
+			notify("Crate")
+		end
+	else
+		notify("Error")
+	end
+	spinner:Destroy()
+end
+
+local function cloneSpinner()
+	local model = workspace.Spinner:Clone()
+	model.Parent = workspace
+	model.Name = "Spinner1"
+	model.Spots:Destroy()
+	model.ToWeld:Destroy()
+	for i,v in pairs(model:GetDescendants()) do 
+		pcall(function()
+			if v.Transparency then 
+				v.Transparency = 1
+			end
+			if v.Visible then
+				v.Visible = false
+			end
+		end)
+	end
+	return model
+end
+
+game.ReplicatedStorage.Remotes.Target.Changed:Connect(function()
+	local SpinnerPart = cloneSpinner().PrimaryPart;
+	local Target = game.ReplicatedStorage.Remotes.Target.Value;
+	if Target == 0 then
+		return;
+	end;
+	local Length = game.ReplicatedStorage.Remotes.Length.Value;
+	local OldCFrame = SpinnerPart.CFrame;
+	local finalRotation = (1 - 2.718281828459045 ^ (-6 * (Length / Length))) / 0.9975212478233336 * Target;
+	SpinnerPart.CFrame = OldCFrame * CFrame.Angles(0, math.rad(finalRotation), 0);
+	wait(0.1)
+	if getgenv().predictnext == true then 
+		printplayer(SpinnerPart.Parent)
+	end
+end);
+
+local main = Material.Load({
+	Title = "The Spinner";
+	Style = 1;
+
+	Theme = 'Dark';
+	SizeX = 300;
+	SizeY = 320;
+})
+local tab = main.New({
+	Title = "Main";
+})
+tab.Toggle({
+	Text = "Predict Next Player";
+	Callback = function(value) getgenv().predictnext = value  end;
+	Menu = {
+	    Info = function(self)
+	        main.Banner({
+	            Text = "Shows the next player or crate when the round begins. Also If you are chosen and leave immediately you can still lose your cash"
+	        })
+	        end
+	}
+})
+tab.Toggle({
+	Text = "Auto Vote";
+	Callback = function(value) getgenv().autovote = value end;
+	Enabled = false;
+})
+tab.Toggle({
+	Text = "Show Ghosts";
+	Callback = function(value) getgenv().showghosts = value end ;
+})
+tab.Button({
+    Text = "Ragdoll";
+    Callback = function(value)  game.ReplicatedStorage.Remotes.Ragdoll:FireServer(game.Players.LocalPlayer) end; 
+})
