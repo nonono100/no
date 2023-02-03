@@ -48,6 +48,27 @@ end
 local vote = game:GetService("ReplicatedStorage").Remotes.Vote
 getgenv().autovote = true
 getgenv().showghosts = false
+pcall(function()
+	local c1 = game:GetService("Workspace").Board.SurfaceGui.Frame.TextLabel
+	local function updateCountdown()
+		local c2 = game:GetService("Players").LocalPlayer.PlayerGui.MainUi.Timer
+		if getgenv().autovote == true then 
+			local text = game:GetService("Workspace").Board.SurfaceGui.Frame.TextLabel.Text
+			if text == "5" then
+				c2.Visible = true
+			end
+			c2.TextLabel.Text = text
+			if text == "0" then
+				wait(1)
+				c2.TextLabel.Text = ""
+			end
+		else 
+			c2.TextLabel.Text = ""
+		end
+	end
+
+	game:GetService("Workspace").Board.SurfaceGui.Frame.TextLabel:GetPropertyChangedSignal("Text"):Connect(updateCountdown)
+end)
 vote.OnClientEvent:Connect(function(p1,p2,p3)
 	if getgenv().autovote == true then
 		pcall(function()
@@ -121,7 +142,7 @@ local function printplayer(spinner)
 	else
 		notify("Error")
 	end
-	spinner:Destroy()
+	game.Debris:AddItem(spinner, 60)
 end
 
 local function cloneSpinner()
@@ -174,11 +195,11 @@ tab.Toggle({
 	Text = "Predict Next Player";
 	Callback = function(value) getgenv().predictnext = value  end;
 	Menu = {
-	    Info = function(self)
-	        main.Banner({
-	            Text = "Shows the next player or crate when the round begins. If you are chosen and leave immediately you can still lose your cash"
-	        })
-	        end
+		Info = function(self)
+			main.Banner({
+				Text = "Shows the next player or crate when the round begins. If you are chosen and leave immediately you can still lose your cash"
+			})
+		end
 	}
 })
 tab.Toggle({
@@ -191,6 +212,6 @@ tab.Toggle({
 	Callback = function(value) getgenv().showghosts = value end ;
 })
 tab.Button({
-    Text = "Ragdoll";
-    Callback = function(value)  game.ReplicatedStorage.Remotes.Ragdoll:FireServer(game.Players.LocalPlayer) end; 
+	Text = "Ragdoll";
+	Callback = function(value)  game.ReplicatedStorage.Remotes.Ragdoll:FireServer(game.Players.LocalPlayer) end; 
 })
