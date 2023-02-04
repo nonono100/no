@@ -196,7 +196,7 @@ game.ReplicatedStorage.Remotes.DeathEffect.OnClientEvent:Connect(function(p1,p2,
 end)
 
 local main = Material.Load({
-	Title = "The Spinner v1.1";
+	Title = "The Spinner";
 	Style = 1;
 
 	Theme = 'Dark';
@@ -223,7 +223,7 @@ tab.Toggle({
 	Menu = {
 		Info = function(self)
 			main.Banner({
-				Text = "This only works against the saw; Use at your own risk."
+				Text = "This godmode only works against the saw."
 			})
 		end
 	}
