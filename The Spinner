@@ -48,6 +48,7 @@ end
 local vote = game:GetService("ReplicatedStorage").Remotes.Vote
 getgenv().autovote = true
 getgenv().showghosts = false
+getgenv().godmode = false 
 pcall(function()
 	local c1 = game:GetService("Workspace").Board.SurfaceGui.Frame.TextLabel
 	local function updateCountdown()
@@ -96,7 +97,7 @@ local function showghosts(on)
 	end
 end
 spawn(function()
-	while wait(5) do 
+	while wait(0.5) do 
 		if getgenv().showghosts == true then
 			showghosts(true)
 		else
@@ -142,7 +143,7 @@ local function printplayer(spinner)
 	else
 		notify("Error")
 	end
-	game.Debris:AddItem(spinner, 60)
+	game.Debris:AddItem(spinner, 90)
 end
 
 local function cloneSpinner()
@@ -153,6 +154,9 @@ local function cloneSpinner()
 	model.ToWeld:Destroy()
 	for i,v in pairs(model:GetDescendants()) do 
 		pcall(function()
+			if v:IsA("RopeConstraint") then 
+				v.Visible = false
+			end
 			if v.Transparency then 
 				v.Transparency = 1
 			end
@@ -179,9 +183,20 @@ game.ReplicatedStorage.Remotes.Target.Changed:Connect(function()
 		printplayer(SpinnerPart.Parent)
 	end
 end);
+game.ReplicatedStorage.Remotes.DeathEffect.OnClientEvent:Connect(function(p1,p2,p3)
+	if p3 == game.Players.LocalPlayer.Character and getgenv().godmode == true then 
+		print("test")
+		local weld = p3:FindFirstChild("SpinnerWeld") 
+		local weld1 = weld:Clone()
+		weld1.Parent = p3 
+		weld:Destroy()
+		wait(10)
+		weld1:Destroy()
+	end
+end)
 
 local main = Material.Load({
-	Title = "The Spinner";
+	Title = "The Spinner v1.1";
 	Style = 1;
 
 	Theme = 'Dark';
@@ -198,6 +213,17 @@ tab.Toggle({
 		Info = function(self)
 			main.Banner({
 				Text = "Shows the next player or crate when the round begins. If you are chosen and leave immediately you can still lose your cash"
+			})
+		end
+	}
+})
+tab.Toggle({
+	Text = "Godmode";
+	Callback = function(value)  getgenv().godmode = true end; 
+	Menu = {
+		Info = function(self)
+			main.Banner({
+				Text = "This only works against the saw; Use at your own risk."
 			})
 		end
 	}
