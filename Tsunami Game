@@ -1,0 +1,138 @@
+local Material = loadstring(game:HttpGet("https://raw.githubusercontent.com/nonono100/no/main/UI"))()
+
+getgenv().autocoins = false 
+getgenv().autotsunami = false
+getgenv().autobananas = false
+getgenv().disabledamage = false
+
+local main = Material.Load({
+	Title = "Tsunami Game";
+	Style = 1;
+
+	Theme = 'Aqua';
+	SizeX = 300;
+	SizeY = 320;
+	ColorOverrides = {
+		TextField = Color3.fromRGB(33,33,255);
+		TextFieldAccent = Color3.fromRGB(33,33,255);
+	}
+})
+
+local tab = main.New({
+	Title = "Main";
+})
+
+tab.TextField({
+	Text = "Last Updated 2/24/2023",
+	Callback = function(Value)
+		print(Value)
+	end
+})
+
+tab.Toggle({
+	Text = "Auto Tsunami Button";
+	Callback = function(value) autotsunami = value end ;
+})
+
+tab.Toggle({
+	Text = "Auto Collect Coins";
+	Callback = function(value) autocoins = value end ;
+})
+
+tab.Toggle({
+	Text = "Auto Collect Bananas";
+	Callback = function(value) autobananas = value end ;
+})
+
+tab.Toggle({
+	Text = "No Tsunami Damage";
+	Callback = function(value) 
+		disabledamage = value
+		if workspace.ActiveTsunamis:FindFirstChildWhichIsA("Model") then 
+			for i,v in pairs(workspace.ActiveTsunamis:FindFirstChildWhichIsA("Model"):GetDescendants()) do 
+				pcall(function()
+					v.CanCollide = false
+					v.CanTouch = false
+				end)
+			end
+		end
+	end
+})
+
+local tab1 = main.New({
+	Title = "Player";
+})
+
+tab1.Slider({
+	Text = "Walkspeed";
+	Callback = function(value) game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value end ;
+	Min = 16;
+	Max = 500; 
+	Def = 16; 
+})
+tab1.Slider({
+	Text = "Jump Power";
+	Callback = function(value) game.Players.LocalPlayer.Character.Humanoid.JumpPower = value  end ;
+	Min = 50;
+	Max = 500; 
+	Def = 50; 
+})
+
+local tab2 = main.New({
+	Title = "Teleports";
+})
+
+local locations = {
+	["Portal"] = CFrame.new(-9.43837738, 41.3184319, -998.158325, 0.999465942, -2.19773959e-08, 0.0326779783, 1.90901002e-08, 1, 8.86680311e-08, -0.0326779783, -8.79968525e-08, 0.999465942);
+	["Beach"] = CFrame.new(-108.958107, 124.134422, 935.293274, 0.998979211, -3.5873633e-09, -0.0451721102, 1.26647404e-09, 1, -5.14074259e-08, 0.0451721102, 5.12977394e-08, 0.998979211);
+	["Chess"] = CFrame.new(37.783886, 267.318359, -1039.74109, -0.970978916, -7.54303144e-08, -0.239165068, -5.44217933e-08, 1, -9.44448146e-08, 0.239165068, -7.86881316e-08, -0.970978916);
+	["Alien Shop"] = CFrame.new(1166.65833, 231.31839, -1078.15723, 0.543564439, -8.59597371e-09, -0.839367449, 5.53121104e-08, 1, 2.55784549e-08, 0.839367449, -6.033072e-08, 0.543564439);
+	["Black Market"] = CFrame.new(157.735626, 123.018425, -545.299744, 0.999962509, 2.95643843e-10, -0.00865611248, -2.35797076e-10, 1, 6.91483537e-09, 0.00865611248, -6.91253499e-09, 0.999962509);
+}
+
+for i,v in pairs(locations) do 
+	tab2.Button({
+		Text = i;
+		Callback = function() 
+			game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = v
+		end;
+	})
+end
+
+workspace.ActiveTsunamis.ChildAdded:Connect(function(child)
+	if disabledamage then
+		wait(0.2)
+		for i,v in pairs(child:GetDescendants()) do 
+			pcall(function()
+				v.CanCollide = false
+				v.CanTouch = false
+			end)
+		end
+	end
+end)
+
+spawn(function()
+	while wait() do 
+		if autotsunami and game.Players.LocalPlayer:FindFirstChild("PlrStats") and game.Players.LocalPlayer.PlrStats:FindFirstChild("LastButtonPress") then 
+			pcall(function()
+				if game:GetService("Players").LocalPlayer.PlrStats.LastButtonPress.Value >= 60 then 
+					wait(1)
+					firetouchinterest(workspace.ScriptImportance.ButtonModel.Button, game.Players.LocalPlayer.Character.Head, 0)
+					firetouchinterest(workspace.ScriptImportance.ButtonModel.Button, game.Players.LocalPlayer.Character.Head, 1)
+				end
+			end)
+		end
+		if autocoins then 
+			wait(1)
+			for i,v in pairs(workspace:GetDescendants()) do 
+				if v.Name == "CoinCollision" and v:FindFirstChild("TouchInterest") then 
+					firetouchinterest(v, game.Players.LocalPlayer.Character.Head, 0)
+				end
+			end
+		end
+		if autobananas then 
+			firetouchinterest(game:GetService("Workspace").ScriptImportance.IntoTheVoid2.VoidEnd, game.Players.LocalPlayer.Character.Head, 0)
+			firetouchinterest(game:GetService("Workspace").ScriptImportance.IntoTheVoid2.VoidEnd, game.Players.LocalPlayer.Character.Head, 1)
+		end
+	end
+end)
