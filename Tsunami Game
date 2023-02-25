@@ -4,6 +4,7 @@ getgenv().autocoins = false
 getgenv().autotsunami = false
 getgenv().autobananas = false
 getgenv().autowin = false
+getgenv().autopogostick = false
 getgenv().disabledamage = false
 getgenv().firetrail = false
 getgenv().ws = 16
@@ -27,7 +28,7 @@ local tab = main.New({
 tab.TextField({
 	Text = "Last Updated 2/25/2023",
 	Callback = function(Value)
-		print(Value)
+
 	end
 })
 
@@ -132,6 +133,55 @@ tab1.Toggle({
 	end
 })
 
+local function noclip()
+	for _, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+		pcall(function()
+			if v:IsA("BasePart") then
+				v.CanCollide = false
+			end
+		end)
+	end
+end
+
+local function freeze(state)
+	for i,v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do 
+		if state == true then
+			if v:IsA("BasePart") and not v.Anchored then
+				v.Anchored = true
+			end
+		else 
+			if v:IsA("BasePart") and v.Anchored then
+				v.Anchored = false
+			end
+		end
+	end
+end
+local function addplatform()
+	if not workspace:FindFirstChild("bread") then 
+		local bread = Instance.new("Part", workspace)
+		bread.Name = "bread"
+		bread.Anchored = true 
+		bread.Orientation = Vector3.new(0,90,0)
+		bread.Size = Vector3.new(1888, 0.01, 18)
+		bread.Position = Vector3.new(-118, 111, -25)
+	end
+end
+
+if game.Players.LocalPlayer and game.Players.LocalPlayer:FindFirstChild("StarterGear") and game.Players.LocalPlayer.StarterGear:FindFirstChild("PogoStick") then 
+	tab1.Toggle({
+		Text = "Auto Pogostick";
+		Callback = function(value) autopogostick = value 
+			if value == true then 
+				freeze(true)
+			else 
+				if game.Players.LocalPlayer.Character:FindFirstChild("PogoStick") then 
+					game.Players.LocalPlayer.Character.Humanoid:UnequipTools()
+				end
+				freeze(false)
+			end
+		end ;
+	})
+end
 tab1.Button({
 	Text = "Disable Ragdoll";
 	Callback = function(value) 
@@ -177,15 +227,7 @@ spawn(pcall(function()
 		end
 	end)
 end))
-local function noclip()
-	for _, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
-		pcall(function()
-			if v:IsA("BasePart") then
-				v.CanCollide = false
-			end
-		end)
-	end
-end
+
 spawn(function()
 	while wait() do 
 		if autotsunami and game.Players.LocalPlayer:FindFirstChild("PlrStats") and game.Players.LocalPlayer.PlrStats:FindFirstChild("LastButtonPress") then 
@@ -224,14 +266,7 @@ spawn(function()
 		end
 		if autowin then 
 			pcall(function()
-				if not workspace:FindFirstChild("bread") then 
-					local bread = Instance.new("Part", workspace)
-					bread.Name = "bread"
-					bread.Anchored = true 
-					bread.Orientation = Vector3.new(0,90,0)
-					bread.Size = Vector3.new(1888, 0.01, 18)
-					bread.Position = Vector3.new(-118, 111, -25)
-				end
+				addplatform()
 				if game.Players.LocalPlayer:FindFirstChild("PlrStats") and game.Players.LocalPlayer.PlrStats:FindFirstChild("TimeOfRun") and game.Players.LocalPlayer.PlrStats.TimeOfRun.Value > 30 then 
 					local noclipping = game.RunService.Stepped:Connect(noclip)
 					for i,v in pairs(checkpoints) do 
@@ -246,6 +281,13 @@ spawn(function()
 					wait(0.5)
 				end
 			end)
+		end
+		if autopogostick then 
+			if not game.Players.LocalPlayer.Character:FindFirstChild("PogoStick") then 
+				game.Players.LocalPlayer.Character.Humanoid:EquipTool(game.Players.LocalPlayer.Backpack.PogoStick)
+			end
+			game:GetService("Players").LocalPlayer.Character.PogoStick.PogoStickEvent:FireServer(.5)
+			wait(1)
 		end
 	end
 end)
