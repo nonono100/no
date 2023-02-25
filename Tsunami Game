@@ -3,6 +3,7 @@ local Material = loadstring(game:HttpGet("https://raw.githubusercontent.com/nono
 getgenv().autocoins = false 
 getgenv().autotsunami = false
 getgenv().autobananas = false
+getgenv().autowin = false
 getgenv().disabledamage = false
 getgenv().firetrail = false
 getgenv().ws = 16
@@ -24,7 +25,7 @@ local tab = main.New({
 })
 
 tab.TextField({
-	Text = "Last Updated 2/24/2023",
+	Text = "Last Updated 2/25/2023",
 	Callback = function(Value)
 		print(Value)
 	end
@@ -46,10 +47,15 @@ tab.Toggle({
 })
 
 tab.Toggle({
+	Text = "Auto Win";
+	Callback = function(value) autowin = value end ;
+})
+
+tab.Toggle({
 	Text = "No Tsunami Damage";
 	Callback = function(value) 
 		disabledamage = value
-		if workspace.ActiveTsunamis:FindFirstChildWhichIsA("Model") then 
+		if workspace:FindFirstChild("ActiveTsunamis") and workspace.ActiveTsunamis:FindFirstChildWhichIsA("Model") then 
 			for i,v in pairs(workspace.ActiveTsunamis:FindFirstChildWhichIsA("Model"):GetDescendants()) do 
 				pcall(function()
 					v.CanCollide = false
@@ -71,7 +77,13 @@ local locations = {
 	["Alien Shop"] = CFrame.new(1166.65833, 231.31839, -1078.15723, 0.543564439, -8.59597371e-09, -0.839367449, 5.53121104e-08, 1, 2.55784549e-08, 0.839367449, -6.033072e-08, 0.543564439);
 	["Black Market"] = CFrame.new(157.735626, 123.018425, -545.299744, 0.999962509, 2.95643843e-10, -0.00865611248, -2.35797076e-10, 1, 6.91483537e-09, 0.00865611248, -6.91253499e-09, 0.999962509);
 	["Button Room"] = CFrame.new(-32.6827965, 123.31842, 1052.83362, -0.999999464, 3.56847413e-10, 0.00100977602, 3.38314043e-10, 1, -1.83541236e-08, -0.00100977602, -1.83537718e-08, -0.999999464);
+}
 
+local checkpoints = {
+	[1] = CFrame.new(-117.427643, 121.7304, 912.150085, 0.989542365, -5.15421341e-08, -0.144242406, 4.01637834e-08, 1, -8.17954131e-08, 0.144242406, 7.51467013e-08, 0.989542365);
+	[2] = CFrame.new(-117.8304062, 121.31842, 608.746887, 0.997247279, 1.05127612e-07, -0.0741479248, -1.04590363e-07, 1, 1.1128547e-08, 0.0741479248, -3.34275452e-09, 0.997247279);
+	[3] = CFrame.new(-117.543991, 121.318436, 105.35611, 0.999543846, -1.02006325e-07, -0.0302017648, 1.00786096e-07, 1, -4.19248067e-08, 0.0302017648, 3.88617671e-08, 0.999543846);
+	[4] = CFrame.new(-117.605301, 121.318443, -408.383636, 0.996491492, 2.25358203e-08, -0.0836938471, -2.14171969e-08, 1, 1.42634669e-08, 0.0836938471, -1.24209354e-08, 0.996491492);
 }
 
 for i,v in pairs(locations) do 
@@ -90,14 +102,23 @@ local tab2 = main.New({
 
 tab2.Slider({
 	Text = "Walkspeed";
-	Callback = function(value) game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value; ws = value end ;
+	Callback = function(value)
+		ws = value
+		if 	game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then 
+			game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value;
+		end
+	end;
 	Min = 16;
 	Max = 500; 
 	Def = 16; 
 })
 tab2.Slider({
 	Text = "Jump Power";
-	Callback = function(value) game.Players.LocalPlayer.Character.Humanoid.JumpPower = value  end ;
+	Callback = function(value)
+		if 	game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then 
+			game.Players.LocalPlayer.Character.Humanoid.JumpPower = value  
+		end
+	end;
 	Min = 50;
 	Max = 500; 
 	Def = 50; 
@@ -116,7 +137,18 @@ tab2.Toggle({
 				end
 			end)
 			wait(0.5)
-			game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = ws
+			if 	game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then 
+				game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = ws
+			end
+		end
+	end
+})
+
+tab2.Button({
+	Text = "Disable Ragdoll";
+	Callback = function(value) 
+		if game.Players.LocalPlayer:FindFirstChild("RagdollClient") then 
+			game.Players.LocalPlayer:FindFirstChild("RagdollClient"):Destroy()
 		end
 	end
 })
@@ -124,22 +156,24 @@ tab2.Toggle({
 tab2.Button({
 	Text = "Godmode";
 	Callback = function(value) 
-		game:GetService("ReplicatedStorage").RemoteEvents.Gameplay.DamageChar:FireServer(game.Players.LocalPlayer.UserId, 0/0)
+		pcall(function()
+			game:GetService("ReplicatedStorage").RemoteEvents.Gameplay.DamageChar:FireServer(game.Players.LocalPlayer.UserId, 0/0)
+		end)
 	end
 })
-
-workspace.ActiveTsunamis.ChildAdded:Connect(function(child)
-	if disabledamage then
-		wait(0.2)
-		for i,v in pairs(child:GetDescendants()) do 
-			pcall(function()
-				v.CanCollide = false
-				v.CanTouch = false
-			end)
+spawn(pcall(function()
+	workspace.ActiveTsunamis.ChildAdded:Connect(function(child)
+		if disabledamage then
+			wait(0.2)
+			for i,v in pairs(child:GetDescendants()) do 
+				pcall(function()
+					v.CanCollide = false
+					v.CanTouch = false
+				end)
+			end
 		end
-	end
-end)
-
+	end)
+end))
 spawn(function()
 	while wait() do 
 		if autotsunami and game.Players.LocalPlayer:FindFirstChild("PlrStats") and game.Players.LocalPlayer.PlrStats:FindFirstChild("LastButtonPress") then 
@@ -152,34 +186,54 @@ spawn(function()
 			end) 
 		end
 		if autocoins then 
-			wait(1)
-			for i,v in pairs(workspace:GetDescendants()) do 
-				if v.Name == "CoinCollision" and v:FindFirstChild("TouchInterest") then 
-					firetouchinterest(v, game.Players.LocalPlayer.Character.Head, 0)
+			pcall(function()
+				wait(1)
+				for i,v in pairs(workspace:GetDescendants()) do 
+					if v.Name == "CoinCollision" and v:FindFirstChild("TouchInterest") then 
+						firetouchinterest(v, game.Players.LocalPlayer.Character.Head, 0)
+					end
 				end
-			end
+			end)
 		end
 		if autobananas then 
-			firetouchinterest(game:GetService("Workspace").ScriptImportance.IntoTheVoid2.VoidEnd, game.Players.LocalPlayer.Character.Head, 0)
-			firetouchinterest(game:GetService("Workspace").ScriptImportance.IntoTheVoid2.VoidEnd, game.Players.LocalPlayer.Character.Head, 1)
+			pcall(function()
+				firetouchinterest(game:GetService("Workspace").ScriptImportance.IntoTheVoid2.VoidEnd, game.Players.LocalPlayer.Character.Head, 0)
+				firetouchinterest(game:GetService("Workspace").ScriptImportance.IntoTheVoid2.VoidEnd, game.Players.LocalPlayer.Character.Head, 1)
+			end)
 		end
 		if firetrail then 
-			wait(0.5)
-			game.ReplicatedStorage.RemoteEvents.Gameplay.LavaBurn:FireServer(game.Players.LocalPlayer.UserId, "LowerTorso")
-			game.ReplicatedStorage.RemoteEvents.Gameplay.LavaBurn:FireServer(game.Players.LocalPlayer.UserId, "UpperTorso")
-			game.ReplicatedStorage.RemoteEvents.Gameplay.LavaBurn:FireServer(game.Players.LocalPlayer.UserId, "LeftHand")
-			game.ReplicatedStorage.RemoteEvents.Gameplay.LavaBurn:FireServer(game.Players.LocalPlayer.UserId, "RightHand")
+			pcall(function()
+				wait(0.5)
+				game.ReplicatedStorage.RemoteEvents.Gameplay.LavaBurn:FireServer(game.Players.LocalPlayer.UserId, "LowerTorso")
+				game.ReplicatedStorage.RemoteEvents.Gameplay.LavaBurn:FireServer(game.Players.LocalPlayer.UserId, "UpperTorso")
+				game.ReplicatedStorage.RemoteEvents.Gameplay.LavaBurn:FireServer(game.Players.LocalPlayer.UserId, "LeftHand")
+				game.ReplicatedStorage.RemoteEvents.Gameplay.LavaBurn:FireServer(game.Players.LocalPlayer.UserId, "RightHand")
+			end)
+		end
+		if autowin then 
+			pcall(function()
+				if game.Players.LocalPlayer:FindFirstChild("PlrStats") and game.Players.LocalPlayer.PlrStats:FindFirstChild("TimeOfRun") and game.Players.LocalPlayer.PlrStats.TimeOfRun.Value > 30 then 
+					for i,v in pairs(checkpoints) do 
+						game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v 
+						wait(1)
+					end
+					firetouchinterest(game:GetService("Workspace").ScriptImportance.WinnersTunnel.WinnersPart, game.Players.LocalPlayer.Character.Head, 0)
+					firetouchinterest(game:GetService("Workspace").ScriptImportance.WinnersTunnel.WinnersPart, game.Players.LocalPlayer.Character.Head, 1)
+					wait(0.5)
+				end
+			end)
 		end
 	end
 end)
-
-while wait() do 
-	if firetrail then
-		pcall(function()
-			game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = ws
-			if game.Players.LocalPlayer.Character.Humanoid.Health < game.Players.LocalPlayer.Character.Humanoid.MaxHealth then 
-				game:GetService("ReplicatedStorage").RemoteEvents.Gameplay.DamageChar:FireServer(game.Players.LocalPlayer.UserId, -math.min(game.Players.LocalPlayer.Character.Humanoid.MaxHealth - game.Players.LocalPlayer.Character.Humanoid.Health))
-			end
-		end)
+spawn(function()
+	while wait() do 
+		if firetrail then
+			pcall(function()
+				game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = ws
+				if game.Players.LocalPlayer.Character.Humanoid.Health < game.Players.LocalPlayer.Character.Humanoid.MaxHealth then 
+					game:GetService("ReplicatedStorage").RemoteEvents.Gameplay.DamageChar:FireServer(game.Players.LocalPlayer.UserId, -math.min(game.Players.LocalPlayer.Character.Humanoid.MaxHealth - game.Players.LocalPlayer.Character.Humanoid.Health))
+				end
+			end)
+		end
 	end
-end
+end)
