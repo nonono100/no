@@ -4,7 +4,7 @@ getgenv().autocoins = false
 getgenv().autotsunami = false
 getgenv().autobananas = false
 getgenv().autowin = false
-getgenv().autopogostick = false
+getgenv().autopogo = false
 getgenv().autochess = false
 getgenv().disabledamage = false
 getgenv().firetrail = false
@@ -65,6 +65,29 @@ tab.Toggle({
 				end)
 			end
 		end
+	end
+})
+
+tab.Button({
+	Text = "Grab Tools";
+	Callback = function(value) 
+		print(value)
+		local s, e = pcall(function()
+			for i,v in pairs(game:GetDescendants()) do 
+				if v:IsA("Tool") then
+					game:GetService("ReplicatedStorage").RemoteEvents.Gui.StorageVaultEvent:FireServer(true, v)
+				end
+			end
+			wait()
+			local connection = game:GetService("ReplicatedStorage").RemoteEvents.Gui.StorageVaultUpdateClient.OnClientEvent:Connect(function(p2, p3)
+				for i,v in pairs(p2) do 
+					game:GetService("ReplicatedStorage").RemoteEvents.Gui.StorageVaultEvent:FireServer(false, i)
+				end
+			end)
+			game:GetService("ReplicatedStorage").RemoteEvents.Gui.StorageVaultUpdateClient:FireServer()
+			wait(1)
+			connection:Disconnect()
+		end) if e then print(e) end
 	end
 })
 
@@ -165,13 +188,14 @@ local function addplatform()
 		bread.Orientation = Vector3.new(0,90,0)
 		bread.Size = Vector3.new(1888, 0.01, 18)
 		bread.Position = Vector3.new(-118, 111, -25)
+		bread.Transparency = 1 
 	end
 end
 
 if game.Players.LocalPlayer and game.Players.LocalPlayer:FindFirstChild("StarterGear") and game.Players.LocalPlayer.StarterGear:FindFirstChild("PogoStick") then 
 	tab1.Toggle({
 		Text = "Auto Pogostick";
-		Callback = function(value) autopogostick = value 
+		Callback = function(value) autopogo = value 
 			if value == true then 
 				freeze(true)
 			else 
@@ -193,8 +217,8 @@ tab1.Toggle({
 tab1.Button({
 	Text = "Disable Ragdoll";
 	Callback = function(value) 
-		if game.Players.LocalPlayer:FindFirstChild("RagdollClient") then 
-			game.Players.LocalPlayer:FindFirstChild("RagdollClient"):Destroy()
+		if game.Players.LocalPlayer.PlayerScripts:FindFirstChild("RagdollClient") then 
+			game.Players.LocalPlayer.PlayerScripts:FindFirstChild("RagdollClient"):Destroy()
 		end
 	end
 })
@@ -290,7 +314,7 @@ spawn(function()
 				end
 			end)
 		end
-		if autopogostick then 
+		if autopogo then 
 			if not game.Players.LocalPlayer.Character:FindFirstChild("PogoStick") then 
 				game.Players.LocalPlayer.Character.Humanoid:EquipTool(game.Players.LocalPlayer.Backpack.PogoStick)
 			end
