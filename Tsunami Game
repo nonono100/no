@@ -1,4 +1,7 @@
 local Material = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kinlei/MaterialLua/master/Module.lua"))()
+local main = Material.Load({Title = "Tsunami Game";Style = 1;Theme = 'Aqua';SizeX = 300;SizeY = 320;ColorOverrides = {TextField = Color3.fromRGB(33,33,255);TextFieldAccent = Color3.fromRGB(33,33,255);}})
+local tab = main.New({Title = "Main";})
+tab.TextField({Text = "Last Updated 2/28/2023"})
 
 getgenv().autocoins = false 
 getgenv().autotsunami = false
@@ -9,95 +12,14 @@ getgenv().autochess = false
 getgenv().disabledamage = false
 getgenv().firetrail = false
 getgenv().ws = 16
-local main = Material.Load({
-	Title = "Tsunami Game";
-	Style = 1;
-
-	Theme = 'Aqua';
-	SizeX = 300;
-	SizeY = 320;
-	ColorOverrides = {
-		TextField = Color3.fromRGB(33,33,255);
-		TextFieldAccent = Color3.fromRGB(33,33,255);
-	}
-})
-
-local tab = main.New({
-	Title = "Main";
-})
-
-tab.TextField({
-	Text = "Last Updated 2/27/2023",
-	Callback = function(Value)
-
-	end
-})
-
-tab.Toggle({
-	Text = "Auto Win";
-	Callback = function(value) autowin = value end ;
-})
-
-tab.Toggle({
-	Text = "Auto Tsunami Button";
-	Callback = function(value) autotsunami = value end ;
-})
-
-tab.Toggle({
-	Text = "Auto Collect Coins";
-	Callback = function(value) autocoins = value end ;
-})
-
-tab.Toggle({
-	Text = "Auto Collect Bananas";
-	Callback = function(value) autobananas = value end ;
-})
-
-tab.Toggle({
-	Text = "No Tsunami Damage";
-	Callback = function(value) 
-		disabledamage = value
-		if workspace:FindFirstChild("ActiveTsunamis") and workspace.ActiveTsunamis:FindFirstChildWhichIsA("Model") then 
-			for i,v in pairs(workspace.ActiveTsunamis:FindFirstChildWhichIsA("Model"):GetDescendants()) do 
-				pcall(function()
-					v.CanCollide = false
-					v.CanTouch = false
-				end)
-			end
-		end
-	end
-})
-
-tab.Button({
-	Text = "Grab Tools";
-	Callback = function(value) 
-		print(value)
-		local s, e = pcall(function()
-			for i,v in pairs(game:GetDescendants()) do 
-				if v:IsA("Tool") then
-					game:GetService("ReplicatedStorage").RemoteEvents.Gui.StorageVaultEvent:FireServer(true, v)
-				end
-			end
-			wait()
-			local connection = game:GetService("ReplicatedStorage").RemoteEvents.Gui.StorageVaultUpdateClient.OnClientEvent:Connect(function(p2, p3)
-				for i,v in pairs(p2) do 
-					game:GetService("ReplicatedStorage").RemoteEvents.Gui.StorageVaultEvent:FireServer(false, i)
-				end
-			end)
-			game:GetService("ReplicatedStorage").RemoteEvents.Gui.StorageVaultUpdateClient:FireServer()
-			wait(1)
-			connection:Disconnect()
-		end) if e then print(e) end
-	end
-})
 
 local locations = {
-	["Portal"] = CFrame.new(-9.43837738, 41.3184319, -998.158325, 0.999465942, -2.19773959e-08, 0.0326779783, 1.90901002e-08, 1, 8.86680311e-08, -0.0326779783, -8.79968525e-08, 0.999465942);
-	["Beach"] = CFrame.new(-108.958107, 124.134422, 935.293274, 0.998979211, -3.5873633e-09, -0.0451721102, 1.26647404e-09, 1, -5.14074259e-08, 0.0451721102, 5.12977394e-08, 0.998979211);
-	["Chess"] = CFrame.new(37.783886, 267.318359, -1039.74109, -0.970978916, -7.54303144e-08, -0.239165068, -5.44217933e-08, 1, -9.44448146e-08, 0.239165068, -7.86881316e-08, -0.970978916);
-	["Alien Shop"] = CFrame.new(1166.65833, 231.31839, -1078.15723, 0.543564439, -8.59597371e-09, -0.839367449, 5.53121104e-08, 1, 2.55784549e-08, 0.839367449, -6.033072e-08, 0.543564439);
-	["Black Market"] = CFrame.new(157.735626, 123.018425, -545.299744, 0.999962509, 2.95643843e-10, -0.00865611248, -2.35797076e-10, 1, 6.91483537e-09, 0.00865611248, -6.91253499e-09, 0.999962509);
-	["Button Room"] = CFrame.new(-32.6827965, 123.31842, 1052.83362, -0.999999464, 3.56847413e-10, 0.00100977602, 3.38314043e-10, 1, -1.83541236e-08, -0.00100977602, -1.83537718e-08, -0.999999464);
+	["Portal"] = CFrame.new(Vector3.new(-9, 41, -998));
+	["Beach"] = CFrame.new(Vector3.new(-109, 124, 935));
+	["Chess"] = CFrame.new(Vector3.new(38, 270, -1039));
+	["Alien Shop"] = CFrame.new(Vector3.new(1166, 234, -1078));
+	["Black Market"] = CFrame.new(Vector3.new(158, 123, -545));
+	["Button Room"] = CFrame.new(Vector3.new(-33, 123, 1053));
 }
 
 local checkpoints = {
@@ -107,55 +29,44 @@ local checkpoints = {
 	[4] = CFrame.new(Vector3.new(-117, 114, -408));
 }
 
-local tab1 = main.New({
-	Title = "Player";
-})
+local _ = function()end
+local b1,b2,b3,b4,b5 = _,_,_,_,_
 
-tab1.Slider({
-	Text = "Walkspeed";
-	Callback = function(value)
-		ws = value
-		if 	game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then 
-			game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value;
-		end
-	end;
-	Min = 16;
-	Max = 500; 
-	Def = 16; 
-})
-tab1.Slider({
-	Text = "Jump Power";
-	Callback = function(value)
-		if 	game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then 
-			game.Players.LocalPlayer.Character.Humanoid.JumpPower = value  
-		end
-	end;
-	Min = 50;
-	Max = 500; 
-	Def = 50; 
-})
+tab.Toggle({Text = "Auto Win";Callback = function(value) autowin = value end;Enabled = autowin;})
 
-tab1.Toggle({
-	Text = "Fire Trail";
-	Callback = function(value) firetrail = value
-		if value == false then 
-			spawn(function()
-				wait(0.5)
-				pcall(function()
-					for i,v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do 
-						if v.Name == "ParticleFire" or v.Name == "ParticleSteam" then 
-							v:Destroy()
-						end
-					end
-				end)
-				wait(0.5)
-				if 	game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then 
-					game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = ws
-				end
-			end)
-		end
-	end
-})
+tab.Toggle({Text = "Auto Tsunami Button";Callback = function(value) autotsunami = value end;Enabled = autotsunami;})
+
+tab.Toggle({Text = "Auto Collect Coins";Callback = function(value) autocoins = value end;Enabled = autocoins;})
+
+tab.Toggle({Text = "Auto Collect Bananas";Callback = function(value) autobananas = value end ;Enabled = autobananas;})
+
+tab.Toggle({Text = "No Tsunami Damage";Callback = function(value) disabledamage = value; if value then b1() end end;Enabled = disabledamage;})
+
+tab.Button({Text = "Grab Tools";Callback = function() b2() end})
+
+local tab1 = main.New({Title = "Player";})
+
+tab1.Slider({Text = "Walkspeed";Callback = function(value) ws = value;game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value;end;Min = 16;Max = 500;Def = 16;})
+
+tab1.Slider({Text = "Jump Power";Callback = function(value) game.Players.LocalPlayer.Character.Humanoid.JumpPower = value end;Min = 50;Max = 500;Def = 50;})
+
+tab1.Toggle({Text = "Fire Trail";Callback = function(value) firetrail = value if not value then b3() end end;Enabled = firetrail;})
+
+tab1.Toggle({Text = "Auto Chess";Callback = function(value) autochess = value end;Enabled = autochess;})
+
+tab1.Toggle({Text = "Auto Pogostick";Callback = function(value) autopogo = value b4(value)end;Enabled = autopogo;})
+
+tab1.Button({Text = "Disable Ragdoll";Callback = function(value) game.Players.LocalPlayer.PlayerScripts:FindFirstChild("RagdollClient"):Destroy() end})
+
+tab1.Button({Text = "Godmode";Callback = function(value) game:GetService("ReplicatedStorage").RemoteEvents.Gameplay.DamageChar:FireServer(game.Players.LocalPlayer.UserId, 0/0) end})
+
+local tab2 = main.New({Title = "Teleports";})
+
+for i,v in pairs(locations) do 
+	tab2.Button({Text = i;Callback = function() game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = v end;})
+end
+
+----------------------
 
 local function noclip()
 	for _, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
@@ -180,6 +91,7 @@ local function freeze(state)
 		end
 	end
 end
+
 local function addplatform()
 	if not workspace:FindFirstChild("bread") then 
 		local bread = Instance.new("Part", workspace)
@@ -192,73 +104,160 @@ local function addplatform()
 	end
 end
 
-if game.Players.LocalPlayer and game.Players.LocalPlayer:FindFirstChild("StarterGear") and game.Players.LocalPlayer.StarterGear:FindFirstChild("PogoStick") then 
-	tab1.Toggle({
-		Text = "Auto Pogostick";
-		Callback = function(value) autopogo = value 
-			if value == true then 
-				freeze(true)
-			else 
-				if game.Players.LocalPlayer.Character:FindFirstChild("PogoStick") then 
-					game.Players.LocalPlayer.Character.Humanoid:UnequipTools()
-				end
-				freeze(false)
-			end
-		end ;
-	})
-end
+----------------------
 
-tab1.Toggle({
-	Text = "Auto Chess";
-	Callback = function(value) autochess = value
-	end ;
-})
-
-tab1.Button({
-	Text = "Disable Ragdoll";
-	Callback = function(value) 
-		if game.Players.LocalPlayer.PlayerScripts:FindFirstChild("RagdollClient") then 
-			game.Players.LocalPlayer.PlayerScripts:FindFirstChild("RagdollClient"):Destroy()
+b1 = function() 
+	if workspace:FindFirstChild("ActiveTsunamis") and workspace.ActiveTsunamis:FindFirstChildWhichIsA("Model") then 
+		for i,v in pairs(workspace.ActiveTsunamis:FindFirstChildWhichIsA("Model"):GetDescendants()) do 
+			pcall(function()
+				v.CanCollide = false
+				v.CanTouch = false
+			end)
 		end
 	end
-})
-
-tab1.Button({
-	Text = "Godmode";
-	Callback = function(value) 
-		pcall(function()
-			game:GetService("ReplicatedStorage").RemoteEvents.Gameplay.DamageChar:FireServer(game.Players.LocalPlayer.UserId, 0/0)
-		end)
-	end
-})
-
-local tab2 = main.New({
-	Title = "Teleports";
-})
-
-for i,v in pairs(locations) do 
-	tab2.Button({
-		Text = i;
-		Callback = function() 
-			--game:GetService("ReplicatedStorage").RemoteEvents.Gameplay.Teleport:FireServer(v)
-			game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = v
-		end;
-	})
 end
 
-spawn(pcall(function()
-	workspace.ActiveTsunamis.ChildAdded:Connect(function(child)
-		if disabledamage then
-			wait(0.2)
-			for i,v in pairs(child:GetDescendants()) do 
-				pcall(function()
-					v.CanCollide = false
-					v.CanTouch = false
-				end)
+b2 = function()
+	local s, e = pcall(function()
+		for i,v in pairs(game:GetDescendants()) do 
+			if v:IsA("Tool") then
+				game:GetService("ReplicatedStorage").RemoteEvents.Gui.StorageVaultEvent:FireServer(true, v)
 			end
+		end
+		wait()
+		local connection = game:GetService("ReplicatedStorage").RemoteEvents.Gui.StorageVaultUpdateClient.OnClientEvent:Connect(function(p2, p3)
+			for i,v in pairs(p2) do 
+				game:GetService("ReplicatedStorage").RemoteEvents.Gui.StorageVaultEvent:FireServer(false, i)
+			end
+		end)
+		game:GetService("ReplicatedStorage").RemoteEvents.Gui.StorageVaultUpdateClient:FireServer()
+		wait(1)
+		connection:Disconnect()
+	end) if e then print(e) end
+end
+
+b3 = function()
+	spawn(function()
+		wait(0.5)
+		pcall(function()
+			for i,v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do 
+				if v.Name == "ParticleFire" or v.Name == "ParticleSteam" then 
+					v:Destroy()
+				end
+			end
+		end)
+		wait(0.5)
+		if 	game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then 
+			game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = ws
 		end
 	end)
-end))
+end
+
+b4 = function(value)
+	if value == true then 
+	    game.Players.LocalPlayer.Character.Humanoid.HipHeight = 0
+	    wait(0.1)
+		freeze(true)
+	else 
+		if game.Players.LocalPlayer.Character:FindFirstChild("PogoStick") then 
+			game.Players.LocalPlayer.Character.Humanoid:UnequipTools()
+		end
+		game.Players.LocalPlayer.Character.Humanoid.HipHeight = 2
+		freeze(false)
+	end
+end
+
+----------------------
+
+spawn(function()
+	while wait() do 
+		if firetrail then
+			pcall(function()
+				game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = ws
+				if game.Players.LocalPlayer.Character.Humanoid.Health < game.Players.LocalPlayer.Character.Humanoid.MaxHealth then 
+					game:GetService("ReplicatedStorage").RemoteEvents.Gameplay.DamageChar:FireServer(game.Players.LocalPlayer.UserId, -math.min(game.Players.LocalPlayer.Character.Humanoid.MaxHealth - game.Players.LocalPlayer.Character.Humanoid.Health))
+				end
+			end)
+		end
+	end
+end)
+
+spawn(function()
+while wait(1) do 
+	if autochess and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") and game.Players.LocalPlayer.Character.Humanoid.Sit == false then 
+		for i,v in pairs(game:GetService("Workspace").ScriptImportance.WinnersLoungeChessStuff:GetChildren()) do 
+			if v:FindFirstChild("Occupant") and not v:FindFirstChildOfClass("Weld") then 
+				firetouchinterest(v, game.Players.LocalPlayer.Character.Head, 0)
+				firetouchinterest(v, game.Players.LocalPlayer.Character.Head, 1)
+			end
+		end
+	end
+end
+end)
+
+workspace.ActiveTsunamis.ChildAdded:Connect(function(child)
+	if disabledamage then
+		wait(0.2)
+		for i,v in pairs(child:GetDescendants()) do 
+			pcall(function()
+				v.CanCollide = false
+				v.CanTouch = false
+			end)
+		end
+	end
+end)
+
+local mycolor
+local index = 0
+local gameStartTime = 0
+local cd = {
+	{6, 1, 7, 2},
+	{21, 2, 31, 4},
+}
+
+game:GetService("ReplicatedStorage").RemoteEvents.Gameplay.ChessEvent.OnClientEvent:Connect(function(p1, p2, p3, p4, p5)
+	if autochess then
+		local s, err = pcall(function()
+			local board = workspace.ScriptImportance.WinnersLoungeChessStuff.ChessBoard
+			local pieces = board.Pieces:GetChildren()
+			if p1 == "NewGame" then 
+				mycolor = p2
+				index = 0
+				gameStartTime = tick()
+				spawn(function()
+					while wait() do 
+						if autochess then 
+							if tick() - gameStartTime > 8 then 
+								game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
+								break
+							end
+						end
+					end
+				end)
+			elseif p1 == "MyTurn" then 
+				wait(0.3)
+				if #board.LegalMoveIndicators:GetChildren() == 2 and mycolor == "white" then  
+					fireclickdetector(board.LegalMoveIndicators:GetChildren()[2].ClickDetector)
+				else 
+					index = index + 1
+				end
+				local colorIndex = (mycolor == "white") and 1 or 2
+				local pieceIndex = cd[colorIndex][index * 2 - 1]
+				local indicatorIndex = cd[colorIndex][index * 2]
+				fireclickdetector(pieces[pieceIndex].ClickDetector)
+				wait(0.3)
+				fireclickdetector(board.LegalMoveIndicators:GetChildren()[indicatorIndex].ClickDetector)
+			elseif p1 == "EndGame" then 
+				index = 0
+				game:GetService("ReplicatedStorage").RemoteEvents.Gameplay.ChessEvent:FireServer("AcceptWin")
+			end
+		end)
+	end
+end)
+
+
+----------------------
+
 
 spawn(function()
 	while wait() do 
@@ -323,74 +322,3 @@ spawn(function()
 		end
 	end
 end)
-spawn(function()
-	while wait() do 
-		if firetrail then
-			pcall(function()
-				game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = ws
-				if game.Players.LocalPlayer.Character.Humanoid.Health < game.Players.LocalPlayer.Character.Humanoid.MaxHealth then 
-					game:GetService("ReplicatedStorage").RemoteEvents.Gameplay.DamageChar:FireServer(game.Players.LocalPlayer.UserId, -math.min(game.Players.LocalPlayer.Character.Humanoid.MaxHealth - game.Players.LocalPlayer.Character.Humanoid.Health))
-				end
-			end)
-		end
-	end
-end)
-
-local mycolor
-local index = 0
-local gameStartTime = 0
-local cd = {
-	{6, 1, 7, 2},
-	{21, 2, 31, 4},
-}
-
-game:GetService("ReplicatedStorage").RemoteEvents.Gameplay.ChessEvent.OnClientEvent:Connect(function(p1, p2, p3, p4, p5)
-	if autochess then
-		local s, err = pcall(function()
-			local board = workspace.ScriptImportance.WinnersLoungeChessStuff.ChessBoard
-			local pieces = board.Pieces:GetChildren()
-			if p1 == "NewGame" then 
-				mycolor = p2
-				index = 0
-				gameStartTime = tick()
-				spawn(function()
-					while wait() do 
-						if autochess then 
-							if tick() - gameStartTime > 8 then 
-								game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
-								break
-							end
-						end
-					end
-				end)
-			elseif p1 == "MyTurn" then 
-				wait(0.3)
-				if #board.LegalMoveIndicators:GetChildren() == 2 and mycolor == "white" then  
-					fireclickdetector(board.LegalMoveIndicators:GetChildren()[2].ClickDetector)
-				else 
-					index = index + 1
-				end
-				local colorIndex = (mycolor == "white") and 1 or 2
-				local pieceIndex = cd[colorIndex][index * 2 - 1]
-				local indicatorIndex = cd[colorIndex][index * 2]
-				fireclickdetector(pieces[pieceIndex].ClickDetector)
-				wait(0.3)
-				fireclickdetector(board.LegalMoveIndicators:GetChildren()[indicatorIndex].ClickDetector)
-			elseif p1 == "EndGame" then 
-				index = 0
-				game:GetService("ReplicatedStorage").RemoteEvents.Gameplay.ChessEvent:FireServer("AcceptWin")
-			end
-		end)
-	end
-end)
-
-while wait(1) do 
-	if autochess and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") and game.Players.LocalPlayer.Character.Humanoid.Sit == false then 
-		for i,v in pairs(game:GetService("Workspace").ScriptImportance.WinnersLoungeChessStuff:GetChildren()) do 
-			if v:FindFirstChild("Occupant") and not v:FindFirstChildOfClass("Weld") then 
-				firetouchinterest(v, game.Players.LocalPlayer.Character.Head, 0)
-				firetouchinterest(v, game.Players.LocalPlayer.Character.Head, 1)
-			end
-		end
-	end
-end
