@@ -1,11 +1,12 @@
 local Material = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kinlei/MaterialLua/master/Module.lua"))()
-local main = Material.Load({Title = "Tsunami Game";Style = 1;Theme = 'Aqua';SizeX = 300;SizeY = 320;ColorOverrides = {TextField = Color3.fromRGB(33,33,255);TextFieldAccent = Color3.fromRGB(33,33,255);}})
+local main = Material.Load({Title = "Tsunami Game";Style = 1;Theme = 'Aqua';SizeX = 320;SizeY = 370;ColorOverrides = {TextField = Color3.fromRGB(33,33,255);TextFieldAccent = Color3.fromRGB(33,33,255);}})
 local tab = main.New({Title = "Main";})
-tab.TextField({Text = "Last Updated 2/28/2023"})
+--tab.TextField({Text = "Updated 3/1/2023"})
 
 getgenv().autocoins = false 
 getgenv().autotsunami = false
 getgenv().autobananas = false
+getgenv().autogold = false
 getgenv().autowin = false
 getgenv().autopogo = false
 getgenv().autochess = false
@@ -38,7 +39,9 @@ tab.Toggle({Text = "Auto Tsunami Button";Callback = function(value) autotsunami 
 
 tab.Toggle({Text = "Auto Collect Coins";Callback = function(value) autocoins = value end;Enabled = autocoins;})
 
-tab.Toggle({Text = "Auto Collect Bananas";Callback = function(value) autobananas = value end ;Enabled = autobananas;})
+tab.Toggle({Text = "Auto Collect Gold";Callback = function(value) autogold = value end ;Enabled = autogold;})
+
+tab.Toggle({Text = "Auto Sell Bananas";Callback = function(value) autobananas = value; if value then b5() end end ;Enabled = autobananas;})
 
 tab.Toggle({Text = "No Tsunami Damage";Callback = function(value) disabledamage = value; if value then b1() end end;Enabled = disabledamage;})
 
@@ -54,7 +57,7 @@ tab1.Toggle({Text = "Fire Trail";Callback = function(value) firetrail = value if
 
 tab1.Toggle({Text = "Auto Chess";Callback = function(value) autochess = value end;Enabled = autochess;})
 
-tab1.Toggle({Text = "Auto Pogostick";Callback = function(value) autopogo = value b4(value)end;Enabled = autopogo;})
+if game.Players.LocalPlayer.StarterGear:FindFirstChild("PogoStick") then tab1.Toggle({Text = "Auto Pogostick";Callback = function(value) autopogo = value b4(value)end;Enabled = autopogo;}) end
 
 tab1.Button({Text = "Disable Ragdoll";Callback = function(value) game.Players.LocalPlayer.PlayerScripts:FindFirstChild("RagdollClient"):Destroy() end})
 
@@ -101,6 +104,22 @@ local function addplatform()
 		bread.Size = Vector3.new(1888, 0.01, 18)
 		bread.Position = Vector3.new(-118, 111, -25)
 		bread.Transparency = 1 
+	end
+end
+
+local function collectbananas()
+	for i,v in pairs(game:GetService("Workspace").ActiveGearDebris.Bananas:GetDescendants()) do 
+		if v:IsA("ProximityPrompt") then 
+			fireproximityprompt(v)
+		end
+	end
+end
+
+local function collectcoins()
+	for i,v in pairs(workspace:GetDescendants()) do 
+		if v.Name == "CoinCollision" and v:FindFirstChild("TouchInterest") then 
+			firetouchinterest(v, game.Players.LocalPlayer.Character.Head, 0)
+		end
 	end
 end
 
@@ -155,8 +174,8 @@ end
 
 b4 = function(value)
 	if value == true then 
-	    game.Players.LocalPlayer.Character.Humanoid.HipHeight = 0
-	    wait(0.1)
+		game.Players.LocalPlayer.Character.Humanoid.HipHeight = 0
+		wait(0.1)
 		freeze(true)
 	else 
 		if game.Players.LocalPlayer.Character:FindFirstChild("PogoStick") then 
@@ -164,6 +183,15 @@ b4 = function(value)
 		end
 		game.Players.LocalPlayer.Character.Humanoid.HipHeight = 2
 		freeze(false)
+	end
+end
+
+b5 = function(value) 
+	if game.Players.LocalPlayer.leaderstats.Points.Value < 26 then 
+		collectcoins()
+	end
+	if not game.Players.LocalPlayer.Backpack:FindFirstChild("Banana") then 
+		game:GetService("ReplicatedStorage").RemoteEvents.Gui.ShopItemPurchased:FireServer("SurvivalShop", "Banana")
 	end
 end
 
@@ -183,29 +211,31 @@ spawn(function()
 end)
 
 spawn(function()
-while wait(1) do 
-	if autochess and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") and game.Players.LocalPlayer.Character.Humanoid.Sit == false then 
-		for i,v in pairs(game:GetService("Workspace").ScriptImportance.WinnersLoungeChessStuff:GetChildren()) do 
-			if v:FindFirstChild("Occupant") and not v:FindFirstChildOfClass("Weld") then 
-				firetouchinterest(v, game.Players.LocalPlayer.Character.Head, 0)
-				firetouchinterest(v, game.Players.LocalPlayer.Character.Head, 1)
+	while wait(1) do 
+		if autochess and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") and game.Players.LocalPlayer.Character.Humanoid.Sit == false then 
+			for i,v in pairs(game:GetService("Workspace").ScriptImportance.WinnersLoungeChessStuff:GetChildren()) do 
+				if v:FindFirstChild("Occupant") and not v:FindFirstChildOfClass("Weld") then 
+					firetouchinterest(v, game.Players.LocalPlayer.Character.Head, 0)
+					firetouchinterest(v, game.Players.LocalPlayer.Character.Head, 1)
+				end
 			end
 		end
 	end
-end
 end)
 
-workspace.ActiveTsunamis.ChildAdded:Connect(function(child)
-	if disabledamage then
-		wait(0.2)
-		for i,v in pairs(child:GetDescendants()) do 
-			pcall(function()
-				v.CanCollide = false
-				v.CanTouch = false
-			end)
+if workspace:FindFirstChild("ActiveTsunamis") then
+	workspace.ActiveTsunamis.ChildAdded:Connect(function(child)
+		if disabledamage then
+			wait(0.2)
+			for i,v in pairs(child:GetDescendants()) do 
+				pcall(function()
+					v.CanCollide = false
+					v.CanTouch = false
+				end)
+			end
 		end
-	end
-end)
+	end)
+end
 
 local mycolor
 local index = 0
@@ -267,23 +297,21 @@ spawn(function()
 					wait(1)
 					firetouchinterest(workspace.ScriptImportance.ButtonModel.Button, game.Players.LocalPlayer.Character.Head, 0)
 					firetouchinterest(workspace.ScriptImportance.ButtonModel.Button, game.Players.LocalPlayer.Character.Head, 1)
+
 				end
 			end) 
 		end
 		if autocoins then 
 			pcall(function()
 				wait(1)
-				for i,v in pairs(workspace:GetDescendants()) do 
-					if v.Name == "CoinCollision" and v:FindFirstChild("TouchInterest") then 
-						firetouchinterest(v, game.Players.LocalPlayer.Character.Head, 0)
-					end
-				end
+				collectcoins()
 			end)
 		end
-		if autobananas then 
+		if autogold then 
 			pcall(function()
 				firetouchinterest(game:GetService("Workspace").ScriptImportance.IntoTheVoid2.VoidEnd, game.Players.LocalPlayer.Character.Head, 0)
 				firetouchinterest(game:GetService("Workspace").ScriptImportance.IntoTheVoid2.VoidEnd, game.Players.LocalPlayer.Character.Head, 1)
+				game:GetService("ReplicatedStorage").RemoteEvents.Gui.AlienShopEvent:FireServer("SellChromeBananas", true)
 			end)
 		end
 		if firetrail then 
@@ -319,6 +347,25 @@ spawn(function()
 			end
 			game:GetService("Players").LocalPlayer.Character.PogoStick.PogoStickEvent:FireServer(.5)
 			wait(1)
+		end
+		if autobananas then 
+			pcall(function()
+			    if workspace.ScriptImportance.BlackMarket.AmtBananas.Value < 1200 then
+				game.Players.LocalPlayer.Character.Humanoid:EquipTool(game.Players.LocalPlayer.Backpack.Banana)
+				for i=1,5 do 
+					pcall(function()
+						game:GetService("Players").LocalPlayer.Character.Banana.BananaEvent:FireServer()
+					end)
+				end
+				wait(0.1)
+				collectbananas()
+				wait()
+				game:GetService("ReplicatedStorage").RemoteEvents.Gui.BlackMarketEvent:FireServer("SellBanana", true)
+			    else 
+			        game:GetService("ReplicatedStorage").RemoteEvents.Gui.BlackMarketEvent:FireServer("BuyBananaCrate",1)
+			        wait(1)
+			    end
+			end)
 		end
 	end
 end)
