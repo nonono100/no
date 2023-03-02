@@ -187,7 +187,7 @@ b4 = function(value)
 end
 
 b5 = function(value) 
-	if game.Players.LocalPlayer.leaderstats.Points.Value < 26 then 
+	if game.Players.LocalPlayer.leaderstats.Points.Value < 31 then 
 		collectcoins()
 	end
 	if not game.Players.LocalPlayer.Backpack:FindFirstChild("Banana") then 
