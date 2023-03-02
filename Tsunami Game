@@ -138,8 +138,8 @@ end
 
 b2 = function()
 	local s, e = pcall(function()
-		for i,v in pairs(game:GetDescendants()) do 
-			if v:IsA("Tool") then
+		for i,v in pairs(game.Players:GetDescendants()) do 
+			if v:IsA("Tool") and not v:IsDescendantOf(game.Players.LocalPlayer) then
 				game:GetService("ReplicatedStorage").RemoteEvents.Gui.StorageVaultEvent:FireServer(true, v)
 			end
 		end
