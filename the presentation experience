@@ -1,4 +1,4 @@
-
+------------------- collect all codes -------------------
 local codes = {
     "bookworm";
     "nootnoot";
@@ -33,7 +33,7 @@ game:GetService("ReplicatedStorage").RedeemCode:InvokeServer(v)
 wait(0.5)
     end
 
-----
+------------------- unlock hidden button -------------------
 
 for i,v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.SomeEmotes.actions.Lists:GetDescendants()) do 
     if v:IsA("TextButton") and v.Visible == false then
@@ -42,7 +42,7 @@ for i,v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.SomeEmotes.act
     end
 
 
---Farm gems (autoexecute)
+------------------- Farm gems (autoexecute) -------------------
 
 spawn(function()
     wait(20)
@@ -61,7 +61,7 @@ local random_server = servers_data[random_index]
 
 game:GetService('TeleportService'):TeleportToPlaceInstance(game.PlaceId, random_server.id)
 
--- Farm points (autoexecute)
+------------------- Farm points (autoexecute) -------------------
 
 
 repeat wait() until game.Players and game.Players.LocalPlayer
