@@ -1,0 +1,261 @@
+local Material = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kinlei/MaterialLua/master/Module.lua"))()
+local main = Material.Load({Title = "Psychic Playground";Style = 1;Theme = 'Light';SizeX = 300;SizeY = 330;ColorOverrides = {TextField = Color3.fromRGB(33,33,255);TextFieldAccent = Color3.fromRGB(33,33,255);}})
+local tab = main.New({Title = "Main";})
+tab.TextField({Text = "Last Updated 3/6/2023"})
+
+--[[Settings]]
+getgenv().autofarm = false 
+getgenv().autocollect = false
+getgenv().autothrow = false
+getgenv().maxlift = false
+getgenv().liftmethod = 2
+
+local b1 = function()end
+local b2 = function()end
+local b3 = function()end
+
+tab.Toggle({Text = "Autofarm";Callback = function(value) autofarm = value end;Enabled = autofarm;})
+
+tab.Toggle({Text = "Auto Collect Orbs";Callback = function(value) autocollect = value end;Enabled = autocollect;})
+
+tab.Toggle({Text = "Auto Grab Players";Callback = function(value) autograb = value; if value then b3() end end;Enabled = autograb;})
+
+tab.Toggle({Text = "Auto Throw";Callback = function(value) autothrow = value; if value then b3() end end;Enabled = autothrow;})
+
+tab.Toggle({Text = "Max Lift-Power";Callback = function(value) maxlift = value; if value then b1() end end;Enabled = maxlift;})
+
+tab.Button({Text = "Bring Dummys";Callback = function() b2() end})
+
+--[[Functions]]
+local function to(part)
+	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = part.CFrame
+	game.Players.LocalPlayer.Character.Humanoid.PlatformStand = false
+end
+
+function unformat(num)
+	if num == "" or num == nil or num == "0" then 
+		return 0
+	end
+	local multiplier = 1
+	local suffix = string.sub(num, -1)
+	if suffix == "K" then
+		multiplier = 1000
+	elseif suffix == "M" then
+		multiplier = 1000000
+	elseif suffix == "B" then
+		multiplier = 1000000000
+	end
+
+	local numberString = string.sub(num, 1, #num - 1)
+	if suffix ~= "" and tonumber(numberString) ~= nil then
+		return tonumber(numberString) * multiplier
+	end
+
+	return nil
+end
+
+local function rebirthcost(value)
+	return math.floor(30000 + value * 25000 + 50000 * math.floor(value / 50));
+end
+
+local function getrange()
+	local text = game.Players.LocalPlayer.PlayerGui.HUD.Attributes.Main.AmountLabel.PsychicRange.Text
+	return (15 + tonumber(string.sub(text, 1, string.find(text, "/") - 1)) * 3)
+end
+
+local func = nil
+b1 = function() 
+	for i,v in pairs(getgc()) do
+		if v and getfenv(v) and getfenv(v).script and getfenv(v).script.Name == "Client" and type(v) == "function" and islclosure(v) and not is_synapse_function(v) then
+			if debug.getinfo(v).name == "updateHover" and getupvalue(v, 1) then
+				func = v
+			end
+		end
+	end
+end
+
+local active = false
+local oldcf = nil
+b2 = function() 
+	if active == false then active = true oldcf = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame else return end
+	for i,v in pairs(workspace.Objects:GetChildren()) do 
+		if v.Name =="Dummy" and v:FindFirstChild("HumanoidRootPart") and (oldcf.Position - v.HumanoidRootPart.Position).magnitude > 30 then 
+			wait(0.1)
+			local starttime = tick()
+			to(v.HumanoidRootPart)
+			spawn(function()
+				repeat wait() game.ReplicatedStorage.RemoteEvent:FireServer("SelectObject", v.HumanoidRootPart, game.Players.LocalPlayer:GetMouse().Hit) until tick() - starttime > .25
+			end)
+			wait(0.1)
+			--v.HumanoidRootPart.Velocity = Vector3.new(0,0,0)
+			v.HumanoidRootPart.CFrame = oldcf
+			--v.HumanoidRootPart.Velocity = Vector3.new(0,0,0)
+			for i=1,3 do game.ReplicatedStorage.RemoteEvent:FireServer("DeselectObjects") end
+		end
+	end
+	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = oldcf
+	active = false
+end
+
+b3 = function()
+	local hud = game.Players.LocalPlayer.PlayerGui.HUD
+	if hud.Attributes.Visible == false then 
+		firesignal(hud.Buttons.Attributes.MouseButton1Click)
+		wait(0.1)
+		firesignal(hud.Attributes.CloseButton.MouseButton1Click)
+		firesignal(hud.Attributes.CloseButton.MouseButton1Click)
+	end
+end
+
+
+--[[Autofarm]]
+spawn(function()
+	while wait(1) do 
+		if autofarm then
+			for i,v in pairs(workspace.Objects:GetChildren()) do 
+				if v.Name == "Dummy" and v:FindFirstChild("HumanoidRootPart") and v.HumanoidRootPart:FindFirstChild("TouchInterest") and v:FindFirstChild("Folder") and v.HumanoidRootPart.Position.Y > 450 and v.HumanoidRootPart.Position.Y < 1000 then 
+					pcall(function()
+						if not autofarm then return end
+						wait(0.2)
+						game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.HumanoidRootPart.CFrame
+						local starttime = tick()
+						spawn(function()
+							repeat wait() to(v.HumanoidRootPart) game.ReplicatedStorage.RemoteEvent:FireServer("SelectObject", v.Head, game.Players.LocalPlayer:GetMouse().Hit) until tick() - starttime > .3
+						end)
+						repeat wait() game.ReplicatedStorage.RemoteEvent:FireServer("ThrowObject") until tick() - starttime > .3
+					end)
+				end
+			end
+		end
+	end
+end)
+
+game.RunService.RenderStepped:Connect(function()
+	if autofarm then 
+		game.Players.LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0,0,0)
+	end
+end)
+
+spawn(function()
+	local lastpoints = game.Players.LocalPlayer:WaitForChild("leaderstats").Energy.Value
+	while true do wait()
+		if autofarm then 
+			wait(15)
+			if lastpoints == game.Players.LocalPlayer.leaderstats.Energy.Value then
+				game.Players.LocalPlayer.Character.Humanoid.Health = 0 
+			else
+				lastpoints = game.Players.LocalPlayer.leaderstats.Energy.Value
+			end
+		end
+	end
+end)
+
+spawn(function()
+	while true do 
+		if autofarm and tonumber(unformat(game.Players.LocalPlayer:WaitForChild("leaderstats").Energy.Value)) >= rebirthcost(tonumber(game.Players.LocalPlayer.leaderstats.Rebirth.Value)) then
+			game.ReplicatedStorage.RemoteEvent:FireServer("Rebirth")
+		end
+		wait(1)
+	end
+end)
+
+spawn(function()
+	while wait() do 
+		if autofarm then 
+			local hud = game.Players.LocalPlayer.PlayerGui.HUD
+			if hud.Missions.Visible == false then 
+				firesignal(hud.Buttons.Missions.MouseButton1Click)
+				wait()
+			end
+			if game:GetService("Players").LocalPlayer.PlayerGui.HUD.Missions.Main.Label.Text ~= "Kill Dummies" then 
+				game.ReplicatedStorage.RemoteEvent:FireServer("RollMission")
+				wait()
+			end
+		end
+	end
+end)
+
+--[[Auto Collect Orbs]]
+spawn(function()
+	while wait() do 
+		for i,v in pairs(workspace.EnergyOrbs:GetChildren()) do 
+			if autocollect and v:GetAttribute("Tag") then 
+				game.ReplicatedStorage.RemoteEvent:FireServer("CollectEnergyOrb", v:GetAttribute("Tag"))
+				v:Destroy()
+			end
+		end
+	end
+end)
+
+--[[Auto Grab Players]]
+spawn(function()
+	while wait() do 
+		if autograb then
+			for i,v in pairs(game.Players:GetPlayers()) do 
+				if v ~= game.Players.LocalPlayer and v.Character and v.Character:FindFirstChild("Head") and v.Character:FindFirstChild("HumanoidRootPart") and v.Character:FindFirstChild("Humanoid") and v.Character.Humanoid.Health > 0 and v:DistanceFromCharacter(game.Players.LocalPlayer.Character.HumanoidRootPart.Position) < getrange() then 
+					game.ReplicatedStorage.RemoteEvent:FireServer("SelectObject", v.Character.Head, game.Players.LocalPlayer:GetMouse().Hit)
+				end
+			end
+		end
+	end
+end)
+
+--[[Max LiftPower]]
+for i,v in pairs(game:GetDescendants()) do 
+	if v:IsA("RemoteEvent") then 
+		v.OnClientEvent:Connect(function(p1,p2,p3)
+			if maxlift and liftmethod == 2 and p1 and p1 == "UpdateSelected" then
+				if #p2.Objects ~= 0 then 
+					for i,v in pairs(p2.Objects) do 
+						v.AlignPosition.MaxForce = math.huge
+						v.AlignPosition.Responsiveness = math.huge
+						v.AlignPosition.RigidityEnabled = true
+					end
+				end
+			end
+		end)
+	end
+end
+
+spawn(function()
+	while wait(1) do 
+		if maxlift and liftmethod == 1 then 
+			if func then 
+				getupvalue(func, 1)["LiftPower"] = math.huge
+			else 
+				b1()
+			end
+		end
+	end
+end)
+
+--[[Auto Throw Objects]]
+spawn(function()
+	while wait(.2) do
+		if autothrow and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+			local params = OverlapParams.new()
+			local objectsInSpace = workspace:GetPartBoundsInBox(game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame,Vector3.new(100,100,100),params)
+			for i,v in pairs(objectsInSpace) do 
+				if v:IsDescendantOf(workspace.BrokenObjects) or v:IsDescendantOf(workspace.Objects) then
+					local target = nil 
+					if v.Parent:IsA("Model") and v.Parent.PrimaryPart then 
+						target = v.Parent.PrimaryPart
+					end
+					if v.Parent == workspace.Objects then 
+						target = v
+					end
+					if target and target.Name == "HumanoidRootPart" and not target.Parent:FindFirstChild("Folder") then 
+						target = nil
+					end
+					if autothrow and target ~= nil and game.Players.LocalPlayer:DistanceFromCharacter(target.Position) < getrange() then
+						for i=1,3 do game.ReplicatedStorage.RemoteEvent:FireServer("SelectObject", target, game.Players.LocalPlayer:GetMouse().Hit) end
+						wait()
+						target.Velocity = Vector3.new(0,30,300)
+						for i=1,3 do game.ReplicatedStorage.RemoteEvent:FireServer("ThrowObject") end
+						wait()
+					end
+				end
+			end
+		end
+	end
+end)
