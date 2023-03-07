@@ -1,26 +1,24 @@
 local Material = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kinlei/MaterialLua/master/Module.lua"))()
 local main = Material.Load({Title = "Psychic Playground";Style = 1;Theme = 'Light';SizeX = 300;SizeY = 330;ColorOverrides = {TextField = Color3.fromRGB(33,33,255);TextFieldAccent = Color3.fromRGB(33,33,255);}})
 local tab = main.New({Title = "Main";})
-tab.TextField({Text = "Last Updated 3/6/2023"})
 
 --[[Settings]]
 getgenv().autofarm = false 
 getgenv().autocollect = false
 getgenv().autothrow = false
 getgenv().maxlift = false
-getgenv().liftmethod = 2
+getgenv().liftmethod = 1
 
 local b1 = function()end
 local b2 = function()end
-local b3 = function()end
 
 tab.Toggle({Text = "Autofarm";Callback = function(value) autofarm = value end;Enabled = autofarm;})
 
 tab.Toggle({Text = "Auto Collect Orbs";Callback = function(value) autocollect = value end;Enabled = autocollect;})
 
-tab.Toggle({Text = "Auto Grab Players";Callback = function(value) autograb = value; if value then b3() end end;Enabled = autograb;})
+tab.Toggle({Text = "Auto Grab Players";Callback = function(value) autograb = value; end;Enabled = autograb;})
 
-tab.Toggle({Text = "Auto Throw";Callback = function(value) autothrow = value; if value then b3() end end;Enabled = autothrow;})
+tab.Toggle({Text = "Auto Throw";Callback = function(value) autothrow = value; end;Enabled = autothrow;})
 
 tab.Toggle({Text = "Max Lift-Power";Callback = function(value) maxlift = value; if value then b1() end end;Enabled = maxlift;})
 
@@ -96,17 +94,6 @@ b2 = function()
 	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = oldcf
 	active = false
 end
-
-b3 = function()
-	local hud = game.Players.LocalPlayer.PlayerGui.HUD
-	if hud.Attributes.Visible == false then 
-		firesignal(hud.Buttons.Attributes.MouseButton1Click)
-		wait(0.1)
-		firesignal(hud.Attributes.CloseButton.MouseButton1Click)
-		firesignal(hud.Attributes.CloseButton.MouseButton1Click)
-	end
-end
-
 
 --[[Autofarm]]
 spawn(function()
