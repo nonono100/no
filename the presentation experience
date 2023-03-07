@@ -1,0 +1,42 @@
+------------------- collect all codes -------------------
+local codes = {
+    "bookworm";
+    "nootnoot";
+    "itsaboutdriveitsaboutpower";
+    "5gems";
+    "emotionaldamage";
+    "uwu";
+    "minimalgamespro";
+    "pencil";
+    "megaboost";
+    "hallway";
+    "toilet";
+    "azureoptix";
+    "helicopter";
+    "rat";
+    "code";
+    "teachermadcuzbad";
+    "nikkocoder";
+    "poop";
+    "therearenootherteachersintheschoolbecausenobodywantstoseethebadteacher";
+    "10points";
+    "fartyreward";
+    "flood";
+    "funnybackrooms";
+    "christmas2022";
+    "christmasgift";
+    "manfacepooper";
+    "maxwellgood";
+    }
+for i,v in pairs(codes) do 
+game:GetService("ReplicatedStorage").RedeemCode:InvokeServer(v)
+wait(0.5)
+    end
+
+------------------- unlock hidden button -------------------
+
+for i,v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.SomeEmotes.actions.Lists:GetDescendants()) do 
+    if v:IsA("TextButton") and v.Visible == false then
+        v.Visible = true
+        end
+    end
