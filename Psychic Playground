@@ -178,11 +178,13 @@ end)
 spawn(function()
 	while wait() do 
 		if autograb then
-			for i,v in pairs(game.Players:GetPlayers()) do 
-				if v ~= game.Players.LocalPlayer and v.Character and v.Character:FindFirstChild("Head") and v.Character:FindFirstChild("HumanoidRootPart") and v.Character:FindFirstChild("Humanoid") and v.Character.Humanoid.Health > 0 and v:DistanceFromCharacter(game.Players.LocalPlayer.Character.HumanoidRootPart.Position) < getrange() then 
-					game.ReplicatedStorage.RemoteEvent:FireServer("SelectObject", v.Character.Head, game.Players.LocalPlayer:GetMouse().Hit)
+			pcall(function()
+				for i,v in pairs(game.Players:GetPlayers()) do 
+					if v ~= game.Players.LocalPlayer and v.Character and v.Character:FindFirstChild("Head") and v.Character:FindFirstChild("HumanoidRootPart") and v.Character:FindFirstChild("Humanoid") and v.Character.Humanoid.Health > 0 and v:DistanceFromCharacter(game.Players.LocalPlayer.Character.HumanoidRootPart.Position) < getrange() then 
+						game.ReplicatedStorage.RemoteEvent:FireServer("SelectObject", v.Character.Head, game.Players.LocalPlayer:GetMouse().Hit)
+					end
 				end
-			end
+			end)
 		end
 	end
 end)
@@ -218,28 +220,26 @@ end)
 
 --[[Auto Throw Objects]]
 spawn(function()
-	while wait(.2) do
+	while wait() do
 		if autothrow and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
 			local params = OverlapParams.new()
-			local objectsInSpace = workspace:GetPartBoundsInBox(game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame,Vector3.new(100,100,100),params)
+			local objectsInSpace = workspace:GetPartBoundsInBox(game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame,Vector3.new(65,65,65),params)
 			for i,v in pairs(objectsInSpace) do 
 				if v:IsDescendantOf(workspace.BrokenObjects) or v:IsDescendantOf(workspace.Objects) then
 					local target = nil 
 					if v.Parent:IsA("Model") and v.Parent.PrimaryPart then 
 						target = v.Parent.PrimaryPart
 					end
-					if v.Parent == workspace.Objects then 
+					if v.Parent == workspace.Objects or v.Parent == workspace.BrokenObjects then 
 						target = v
 					end
 					if target and target.Name == "HumanoidRootPart" and not target.Parent:FindFirstChild("Folder") then 
 						target = nil
 					end
 					if autothrow and target ~= nil and game.Players.LocalPlayer:DistanceFromCharacter(target.Position) < getrange() then
-						for i=1,3 do game.ReplicatedStorage.RemoteEvent:FireServer("SelectObject", target, game.Players.LocalPlayer:GetMouse().Hit) end
+						game.ReplicatedStorage.RemoteEvent:FireServer("SelectObject", target, game.Players.LocalPlayer:GetMouse().Hit)
 						wait()
-						target.Velocity = Vector3.new(0,30,300)
-						for i=1,3 do game.ReplicatedStorage.RemoteEvent:FireServer("ThrowObject") end
-						wait()
+						game.ReplicatedStorage.RemoteEvent:FireServer("ThrowObject")
 					end
 				end
 			end
