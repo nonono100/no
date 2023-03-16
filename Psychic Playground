@@ -53,7 +53,7 @@ function unformat(num)
 end
 
 local function rebirthcost(value)
-	return math.floor(30000 + value * 25000 + 50000 * math.floor(value / 50));
+	return math.floor(30000 + value * 25000);
 end
 
 local function getrange()
