@@ -1,33 +1,36 @@
 ------------------- collect all codes -------------------
 local codes = {
-    "bookworm";
-    "nootnoot";
-    "itsaboutdriveitsaboutpower";
-    "5gems";
-    "emotionaldamage";
-    "uwu";
-    "minimalgamespro";
-    "pencil";
-    "megaboost";
-    "hallway";
-    "toilet";
-    "azureoptix";
-    "helicopter";
-    "rat";
-    "code";
-    "teachermadcuzbad";
-    "nikkocoder";
-    "poop";
-    "therearenootherteachersintheschoolbecausenobodywantstoseethebadteacher";
-    "10points";
-    "fartyreward";
-    "flood";
-    "funnybackrooms";
-    "christmas2022";
-    "christmasgift";
-    "manfacepooper";
-    "maxwellgood";
+    "uwu",
+    "fartyreward",
+    "bookwork",
+    "toilet",
+    "itsaboutdriveitsaboutpower",
+    "5gems",
+    "bookworm",
+    "coffee",
+    "maxwellgood",
+    "fartyreward",
+    "hallway",
+    "megaboost",
+    "manfacepooper",
+    "rat",
+    "bookworm",
+    "nikkocoder",
+    "minimalgamespro",
+    "helicopter",
+    "code",
+    "teachermadcuzbad",
+    "funnybackrooms",
+    "ugc",
+    "flood",
+    "poop",
+    "therearenootherteachersintheschoolbecausenobodywantstoseethebadteacher",
+    "200mvisits",
+    "emotionaldamage",
+    "azureoptix",
+    "10points"
     }
+    
 for i,v in pairs(codes) do 
 game:GetService("ReplicatedStorage").RedeemCode:InvokeServer(v)
 wait(0.5)
