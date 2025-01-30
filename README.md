@@ -1,10 +1,7 @@
 ## Scripts Overview
 
-### 1️⃣ Remote Hooking  
-Hooks into remote functions and executes custom logic on intercepted calls.  
-
 <details>
-  <summary>Click to expand</summary>
+  <summary>RemoteHook</summary>
 
 ```lua
 local HS = loadstring(game:HttpGet('https://raw.githubusercontent.com/0zBug/HookingService/refs/heads/main/main.lua'))()
@@ -25,11 +22,8 @@ local HS = loadstring(game:HttpGet('https://raw.githubusercontent.com/0zBug/Hook
 
 ---
 
-### 2️⃣ RemoteFunction Spy  
-Recursively prints tables and RemoteFunction outputs in the developer console.  
-
 <details>
-  <summary>Click to expand</summary>
+  <summary>RemoteFunction spy</summary>
 
 ```lua
   local repr = loadstring(game:HttpGet('https://raw.githubusercontent.com/Ozzypig/repr/master/repr.lua'))()
@@ -40,10 +34,8 @@ game.StarterGui:SetCore("DevConsoleVisible", true)
 ---
 
 ### 3️⃣ Bruteforce RemoteEvents  
-Attempts to brute-force **RemoteEvent** calls using a variety of parameter values.  
-
 <details>
-  <summary>Click to expand</summary>
+  <summary>Bruteforce Remote</summary>
 
 ```lua
 local params = {
@@ -66,28 +58,9 @@ end
 
 ---
 
-### 4️⃣ Miscellaneous Remote Call  
-Executes a predefined **RemoteEvent** with a specific argument (`"Batmobile"`).  
-
-<details>
-  <summary>Click to expand</summary>
-
-```lua
-for i,v in pairs(game.ReplicatedStorage.Packages:GetDescendants()) do
-    if v:IsA("RemoteEvent") then 
-        v:FireServer("Batmobile") -- Edit this as needed
-    end
-end
-```
-</details>
-
----
-
 ### 5️⃣ Targeted Remote Bruteforcing  
-Attempts to call RemoteEvents with specific **game-related parameters** (e.g., `"Lockpick"`, `"Police"`).  
-
 <details>
-  <summary>Click to expand</summary>
+  <summary>used to find shit</summary>
 
  ```lua
 for i,v in pairs(game.ReplicatedStorage:GetDescendants()) do 
