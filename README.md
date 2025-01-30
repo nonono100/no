@@ -32,8 +32,7 @@ game.StarterGui:SetCore("DevConsoleVisible", true)
 </details>
 
 ---
-
-### 3️⃣ Bruteforce RemoteEvents  
+ 
 <details>
   <summary>Bruteforce Remote</summary>
 
@@ -58,7 +57,6 @@ end
 
 ---
 
-### 5️⃣ Targeted Remote Bruteforcing  
 <details>
   <summary>used to find shit</summary>
 
@@ -74,4 +72,4 @@ end
 ---
 
 ## ⚠️ Disclaimer  
-These scripts are for **educational and security testing purposes only**. **Misuse may violate the terms of service of Roblox** and could result in bans or legal consequences. Use responsibly.  
+These scripts are for **educational and security testing purposes only**.
