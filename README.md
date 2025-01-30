@@ -1,7 +1,3 @@
-# Roblox Remote Vulnerability Testing Scripts
-
-A collection of scripts for testing vulnerabilities in **RemoteEvents** and **RemoteFunctions** in Roblox games. These scripts assist in **brute-forcing remote calls**, **spying on RemoteFunctions**, and **manipulating remote arguments**.
-
 ## Scripts Overview
 
 ### 1️⃣ Remote Hooking  
