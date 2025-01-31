@@ -58,7 +58,7 @@ end
 ---
 
 <details>
-  <summary>used to find shit</summary>
+  <summary>Extra</summary>
 
  ```lua
 for i,v in pairs(game.ReplicatedStorage:GetDescendants()) do 
