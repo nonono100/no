@@ -2,7 +2,6 @@
 for i=1,500 do 
     game:GetService("ReplicatedStorage").PurchaseNotification:FireServer("BMW G82 M4")
     end
-
 --god mode me
 for i,v in pairs(game.Players:GetPlayers()) do 
 	pcall(function()
@@ -72,7 +71,7 @@ for i, v in pairs(game.Players:GetPlayers()) do
             wait()
     end
 end
---FUK SHIT (money drop)
+--money drop
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Player = game:GetService("Players").LocalPlayer
 local ChatEvent = Player:WaitForChild("PlayerGui"):WaitForChild("Early 2015 Chat").ChatBox.ChatBox.Chat.ChatEvent
