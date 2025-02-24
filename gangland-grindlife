@@ -1,15 +1,17 @@
---server shut down
+------server shut down
 for i=1,500 do 
     game:GetService("ReplicatedStorage").PurchaseNotification:FireServer("BMW G82 M4")
     end
---god mode me
+
+------god mode me
 for i,v in pairs(game.Players:GetPlayers()) do 
 	pcall(function()
 	v.Backpack.Fist.Script.E:FireServer(game.Players.LocalPlayer.Character.HumanoidRootPart, 0/0)
 	end)
 	wait()
 end
---god mode others
+
+------god mode others
 for i,v in pairs(game.Players:GetPlayers()) do 
     if v ~= game.Players.LocalPlayer then
 	pcall(function()
@@ -17,7 +19,8 @@ for i,v in pairs(game.Players:GetPlayers()) do
 	end)
 end
 end
---kill others
+
+------kill others
 for i,v in pairs(game.Players:GetPlayers()) do 
 	if v ~= game.Players.LocalPlayer then
 	pcall(function()
@@ -27,7 +30,7 @@ for i,v in pairs(game.Players:GetPlayers()) do
 end
 end
 
---cash
+------cash
 for i =1,30000 do 
 	wait()
 	spawn(function()
@@ -53,7 +56,8 @@ while game.Players.LocalPlayer.StatsFolder.Wallet.Value < 144410000 do
     end
     wait(0.1)
 end
---give money
+
+------give money
 local function bankwallet(plr) 
     local stats = plr:FindFirstChild("StatsFolder")
     if stats then
@@ -71,7 +75,8 @@ for i, v in pairs(game.Players:GetPlayers()) do
             wait()
     end
 end
---money drop
+
+------money drop
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Player = game:GetService("Players").LocalPlayer
 local ChatEvent = Player:WaitForChild("PlayerGui"):WaitForChild("Early 2015 Chat").ChatBox.ChatBox.Chat.ChatEvent
@@ -102,9 +107,19 @@ for i = 1, 10 do
     --ReplicatedStorage.UpdateStat:FireServer("Wallet", 99999)
 end
 
+------get guns
+for i=1,10 do 
+    game:GetService("ReplicatedStorage").PurchaseNotification:FireServer("Spas-12")
+    game:GetService("ReplicatedStorage").PurchaseNotification:FireServer("MPD M4A1")
+    game:GetService("ReplicatedStorage").PurchaseNotification:FireServer("Sawed Off")
+    game:GetService("ReplicatedStorage").PurchaseNotification:FireServer("Vector")
+    game:GetService("ReplicatedStorage").PurchaseNotification:FireServer("MP7")
+    game:GetService("ReplicatedStorage").PurchaseNotification:FireServer("MP5")
+    game:GetService("ReplicatedStorage").PurchaseNotification:FireServer("Sawed Off")
+    --game:GetService("ReplicatedStorage").PurchaseNotification:FireServer("Lockpick")
+end
 
---new new gui
---new GUI 
+------new new gui
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
