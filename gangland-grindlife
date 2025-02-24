@@ -1,0 +1,265 @@
+--server shut down
+for i=1,500 do 
+    game:GetService("ReplicatedStorage").PurchaseNotification:FireServer("BMW G82 M4")
+    end
+
+--god mode me
+for i,v in pairs(game.Players:GetPlayers()) do 
+	pcall(function()
+	v.Backpack.Fist.Script.E:FireServer(game.Players.LocalPlayer.Character.HumanoidRootPart, 0/0)
+	end)
+	wait()
+end
+--god mode others
+for i,v in pairs(game.Players:GetPlayers()) do 
+    if v ~= game.Players.LocalPlayer then
+	pcall(function()
+	v.Backpack.Fist.Script.E:FireServer(v.Character.HumanoidRootPart,-6000)
+	end)
+end
+end
+--kill others
+for i,v in pairs(game.Players:GetPlayers()) do 
+	if v ~= game.Players.LocalPlayer then
+	pcall(function()
+	v.Backpack.Fist.Script.E:FireServer(v.Character.HumanoidRootPart, 999999999999999999999999999999999999999999999999999999999)
+	end)
+	wait()
+end
+end
+
+--cash
+for i =1,30000 do 
+	wait()
+	spawn(function()
+		pcall(function()
+			if game.Players.LocalPlayer.StatsFolder.Wallet.Value < 144410000 then 
+			game.Players.LocalPlayer.Backpack["$10000"].RedeemScript.h:InvokeServer(game.Players.LocalPlayer.Character)
+			end
+		end)
+	end)
+end
+
+local function hasTool()
+    for _, tool in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+        if tool.Name == "$10000" then
+            return true
+        end
+    end
+    return false
+end
+while game.Players.LocalPlayer.StatsFolder.Wallet.Value < 144410000 do
+    if not hasTool() then
+        game:GetService("Players").LocalPlayer.PlayerGui["Early 2015 Chat"].ChatBox.ChatBox.Chat.ChatEvent:FireServer("/pay 10000")
+    end
+    wait(0.1)
+end
+--give money
+local function bankwallet(plr) 
+    local stats = plr:FindFirstChild("StatsFolder")
+    if stats then
+        local bank = stats:FindFirstChild("Bank")
+        local wallet = stats:FindFirstChild("Wallet")
+        if bank and wallet and (bank.Value + wallet.Value) <= 800000 then 
+            return true
+        end
+    end
+    return false
+end
+for i, v in pairs(game.Players:GetPlayers()) do 
+    if v ~= game.Players.LocalPlayer and bankwallet(v) then 
+            game.ReplicatedStorage.atm.Functions.actionFunction:InvokeServer("Transfer", 945678, v.Name)
+            wait()
+    end
+end
+--FUK SHIT (money drop)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Player = game:GetService("Players").LocalPlayer
+local ChatEvent = Player:WaitForChild("PlayerGui"):WaitForChild("Early 2015 Chat").ChatBox.ChatBox.Chat.ChatEvent
+local Backpack = Player:WaitForChild("Backpack")
+local function withdrawAndDrop()
+    for i = 1, 10 do
+        local success, err = pcall(function()
+            ChatEvent:FireServer("/pay 10000")
+        end)
+        if success then
+            local tool = Player.Backpack:FindFirstChild("$10000")
+            if tool or Player.Character:FindFirstChild("$10000") then
+                local equipSuccess, equipErr = pcall(function()
+                    tool.Parent = Player.Character
+                end)
+                if equipSuccess or Player.Character:FindFirstChild("$10000") then
+                    local dropSuccess, dropErr = pcall(function()
+                        tool.Parent = workspace
+                    end)
+                end
+            end
+        end
+    end
+end
+for i = 1, 10 do
+    withdrawAndDrop()
+    wait(1)
+    --ReplicatedStorage.UpdateStat:FireServer("Wallet", 99999)
+end
+
+
+--new new gui
+--new GUI 
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+local ChatEvent = PlayerGui:WaitForChild("Early 2015 Chat").ChatBox.ChatBox.Chat.ChatEvent
+
+-- Create GUI Elements
+local ScreenGui = Instance.new("ScreenGui", PlayerGui)
+local MainFrame = Instance.new("Frame", ScreenGui)
+local Title = Instance.new("TextLabel", MainFrame)
+local CloseButton = Instance.new("TextButton", MainFrame)
+local ScrollingFrame = Instance.new("ScrollingFrame", MainFrame)
+local Template = Instance.new("Frame")  -- Template for each player entry
+
+-- Setting properties for the main GUI elements
+MainFrame.Size = UDim2.new(0, 400, 0, 300)
+MainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
+MainFrame.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+Title.Size = UDim2.new(1, 0, 0, 30)
+Title.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
+Title.Text = "Player Stats"
+Title.TextColor3 = Color3.new(1, 1, 1)
+Title.Font = Enum.Font.SourceSansBold
+Title.TextSize = 24
+
+CloseButton.Size = UDim2.new(0, 30, 0, 30)
+CloseButton.Position = UDim2.new(1, -35, 0, 0)
+CloseButton.Text = "X"
+CloseButton.BackgroundColor3 = Color3.new(1, 0, 0)
+CloseButton.TextColor3 = Color3.new(1, 1, 1)
+
+ScrollingFrame.Size = UDim2.new(1, 0, 1, -50)
+ScrollingFrame.Position = UDim2.new(0, 0, 0, 50)
+ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+ScrollingFrame.ScrollBarThickness = 8
+
+Template.Size = UDim2.new(1, 0, 0, 50)
+Template.BackgroundColor3 = Color3.new(0.8, 0.8, 0.8)
+
+-- Function to create a player's entry in the GUI
+local function CreatePlayerEntry(player)
+    local playerFrame = Template:Clone()
+    local usernameLabel = Instance.new("TextLabel", playerFrame)
+    local walletLabel = Instance.new("TextLabel", playerFrame)
+    local bankLabel = Instance.new("TextLabel", playerFrame)
+    local giveButton = Instance.new("TextButton", playerFrame)
+
+    usernameLabel.Text = player.Name
+    usernameLabel.Size = UDim2.new(0.25, 0, 1, 0)
+    usernameLabel.Position = UDim2.new(0, 0, 0, 0)
+
+    walletLabel.Size = UDim2.new(0.25, 0, 1, 0)
+    walletLabel.Position = UDim2.new(0.25, 0, 0, 0)
+
+    bankLabel.Size = UDim2.new(0.25, 0, 1, 0)
+    bankLabel.Position = UDim2.new(0.5, 0, 0, 0)
+
+    giveButton.Size = UDim2.new(0.25, 0, 1, 0)
+    giveButton.Position = UDim2.new(0.75, 0, 0, 0)
+    giveButton.Text = "Give $100k"
+    
+    local function updateStats()
+        local success, wallet = pcall(function() return player:FindFirstChild("StatsFolder").Wallet.Value end)
+        local success2, bank = pcall(function() return player:FindFirstChild("StatsFolder").Bank.Value end)
+
+        if success then
+            walletLabel.Text = "$" .. wallet
+        else
+            walletLabel.Text = "N/A"
+        end
+
+        if success2 then
+            bankLabel.Text = "$" .. bank
+        else
+            bankLabel.Text = "N/A"
+        end
+    end
+
+    -- Update stats when the player is clicked
+	giveButton.MouseButton1Click:Connect(function()
+		-- Spawn ten $10,000 tools in the backpack
+		local success, err = pcall(function()
+            game:GetService("ReplicatedStorage").UpdateStat:FireServer("Wallet",99999)
+			for _ = 1, 10 do
+				ChatEvent:FireServer("/pay 10000")
+				wait() -- Small delay to ensure tools are added sequentially
+			end
+		end)
+	
+		if success then
+			wait() -- Ensure all tools are in the backpack
+	
+			-- Equip all $10,000 tools from the backpack
+			local equipped = false
+			for _, tool in pairs(Player.Backpack:GetChildren()) do
+				if tool.Name == "$10000" then
+					tool.Parent = Player.Character
+					equipped = true
+				end
+			end
+	
+			if equipped then
+				wait() -- Ensure all tools are equipped
+	
+				-- Give the tools to the target player
+				pcall(function()
+                    for i=1,10 do
+					ChatEvent:FireServer("/give " .. player.Name)
+                    end
+				end)
+			else
+				warn("No $10000 tools found to equip.")
+			end
+		else
+			warn("Failed to spawn $10000:", err)
+		end
+	end)
+	
+
+    updateStats() -- Call this initially
+    return playerFrame
+end
+
+-- Function to update the entire GUI
+local function UpdateGUI()
+    ScrollingFrame:ClearAllChildren()
+    local currentY = 0
+    for _, player in pairs(Players:GetPlayers()) do
+        local playerFrame = CreatePlayerEntry(player)
+        playerFrame.Position = UDim2.new(0, 0, 0, currentY)
+        currentY = currentY + 50
+        ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, currentY)
+        playerFrame.Parent = ScrollingFrame
+    end
+end
+
+-- Setup the close button
+CloseButton.MouseButton1Click:Connect(function()
+    ScreenGui.Enabled = false
+end)
+
+-- Connect to player added/removed events
+Players.PlayerAdded:Connect(UpdateGUI)
+Players.PlayerRemoving:Connect(UpdateGUI)
+
+
+-- Initial population of GUI
+UpdateGUI()
+
+spawn(function()
+    while wait(5) do  -- Adjust the interval as needed
+        UpdateGUI()
+    end
+end)
