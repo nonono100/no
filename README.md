@@ -34,7 +34,7 @@ game.StarterGui:SetCore("DevConsoleVisible", true)
 ---
  
 <details>
-  <summary>Bruteforce Remote</summary>
+  <summary>Remote Brute</summary>
 
 ```lua
 local params = {
