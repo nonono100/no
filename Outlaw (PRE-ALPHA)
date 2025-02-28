@@ -1,0 +1,181 @@
+local library = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/ShaddowScripts/Main/main/Library"))()
+local Main = library:CreateWindow("Outlaw (PRE ALPHA) 💵 Auto-farm", "Crimson")
+local tab = Main:CreateTab("farm")
+
+local Jewelry;
+local Bank;
+local Both;
+local toggle;
+
+--rob jewelry
+
+spawn(function()
+while true do wait()
+    if Jewelry == true then 
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(-546, 6, -3548))
+wait(1)
+while workspace:FindFirstChild("Security") do 
+game:GetService("ReplicatedStorage").Events.StoreUI:FireServer("Purchase", "Duffle Bag")
+game:GetService("ReplicatedStorage").Events.StoreUI:FireServer("Purchase", "Drill")
+if not game.Players.LocalPlayer.Backpack:FindFirstChild("Hi-Point") then 
+game:GetService("ReplicatedStorage").Events.GunStoreUI:FireServer("p", "Hi-Point")
+wait(1)
+end
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(-546, 6, -3548))
+game.Players.LocalPlayer.Character.Humanoid:EquipTool(game.Players.LocalPlayer.Backpack["Hi-Point"])
+wait(0.7)
+    for i=1,7 do 
+        for i,v in pairs(workspace:GetChildren()) do 
+            if v.Name == "Security" and v:FindFirstChild("Head") then 
+                spawn(function()
+                game:GetService("ReplicatedStorage").Events.bullethit:FireServer(game:GetService("Players").LocalPlayer.Character["Hi-Point"], v.Head, game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame, Enum.Material.Plastic)
+                end)
+            end
+            end
+            wait(0.2)
+        end
+wait(0.8)
+local rcount = 0
+for i,v in pairs(workspace.InteractableItems["Jewelry Heist"]:GetChildren()) do 
+    if v:IsA("MeshPart") and v.TimeTillRegen.Value == 0 and rcount < 5 then
+wait(0.5)
+spawn(function()
+game:GetService("ReplicatedStorage").Events.StoreUI:FireServer("Purchase", "Drill")
+end) -- new
+spawn(function()
+game.Players.LocalPlayer.Character.Humanoid:EquipTool(game.Players.LocalPlayer.Backpack.Drill)
+end)
+wait(0.5)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(v.Position)
+wait(0.5)
+fireproximityprompt(v.ProximityPrompt)
+wait(0.6)
+game:GetService("ReplicatedStorage").Events.JewelryRobberyGui:FireServer("Success", v)
+wait(0.6)
+pcall(function()
+local button = game.Players.LocalPlayer.PlayerGui.JewelryRobGui.MainFrame.Cancel
+firesignal(button.MouseButton1Click)
+end)
+spawn(function()
+game:GetService("ReplicatedStorage").Events.StoreUI:FireServer("Purchase", "Drill")
+end)
+wait(0.9)
+rcount = rcount + 1
+if rcount >= 5 then
+    break
+end
+
+end end
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(-1347, 7, -565)) 
+wait(1.6)
+fireproximityprompt(workspace.InteractableItems["Jewelry Heist"].JewelrySell.Attachment.ProximityPrompt)
+wait(1)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(741, 7, -3786)) 
+wait(1.2)
+for i=1,20 do 
+    spawn(function()
+fireproximityprompt(workspace.InteractableItems.CleanCash.Clean.ProximityPrompt)
+    end)
+wait(0.3)
+end 
+end
+end
+end 
+end)
+
+
+
+--rob bank
+
+spawn(function()
+while true do wait()
+    if Bank == true then
+while workspace.InteractableItems["Bank Robbery"].VaultDoorClose.Value ~= 0 do wait(1) end
+if Both == true then 
+    Jewelry = false
+end
+game:GetService("ReplicatedStorage").Events.StoreUI:FireServer("Purchase", "Duffle Bag")
+game:GetService("ReplicatedStorage").Events.StoreUI:FireServer("Purchase", "C4")
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(-152, 81, -284))  
+wait(1)
+spawn(function()
+game.Players.LocalPlayer.Character.Humanoid:EquipTool(game.Players.LocalPlayer.Backpack.C4)
+end)
+wait(0.8)
+fireproximityprompt(workspace.InteractableItems["Bank Robbery"].Vault.Handle.Attachment.ProximityPrompt)
+wait(1)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(-174, 20, -328)) 
+wait(6)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(-68, 70, -131))
+wait(1)
+for i,v in pairs(workspace.InteractableItems["Bank Robbery"]:GetChildren()) do 
+    if v.Name == "Gold" or v.Name == "Cash" and v.ProximityPrompt then 
+    fireproximityprompt(v.ProximityPrompt)
+    end
+    end
+    wait(0.8)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(-174, 20, -328))
+wait(0.8)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(-1354, 7, -542))
+wait(1.2)
+fireproximityprompt(workspace.InteractableItems["Bank Robbery"].GoldSell.ProximityPrompt)
+wait(0.8)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(741, 7, -3786))
+wait(1.2)
+for i=1,20 do 
+fireproximityprompt(workspace.InteractableItems.CleanCash.Clean.ProximityPrompt)
+wait(0.3)
+end
+if Both == true then 
+Jewelry = true
+wait(0.5)
+end
+end
+end
+end)
+
+
+tab:CreateToggle("Jewelry", function(state)
+        Jewelry = state
+end)
+
+tab:CreateToggle("Bank", function(state)
+    Bank = state
+end)
+
+tab:CreateToggle("Both", function(state)
+    Both = state
+    if state == false then 
+    Jewelry = false 
+    Bank = false
+    end
+end)
+
+spawn(function()
+while wait() do 
+if Both == true then 
+Bank = true
+end
+if game.Players.LocalPlayer.Character.Humanoid.Health == 0 then 
+game.ReplicatedStorage.Events.Respawn:FireServer()
+end
+end
+end)
+
+local GC = getconnections or get_signal_cons
+	if GC then
+		for i,v in pairs(GC(game.Players.LocalPlayer.Idled)) do
+			if v["Disable"] then
+				v["Disable"](v)
+			elseif v["Disconnect"] then
+				v["Disconnect"](v)
+			end
+		end
+	else
+		game.Players.LocalPlayer.Idled:Connect(function()
+			game:GetService("VirtualUser"):CaptureController()
+			game:GetService("VirtualUser"):ClickButton2(Vector2.new())
+		end)
+	end
+
+tab:Show()
