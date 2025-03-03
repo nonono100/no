@@ -156,7 +156,7 @@ while wait() do
 if Both == true then 
 Bank = true
 end
-if game.Players.LocalPlayer.Character.Humanoid.Health == 0 then 
+if game.Players.LocalPlayer.Character.Humanoid.Health == 1 then 
 game.ReplicatedStorage.Events.Respawn:FireServer()
 end
 end
