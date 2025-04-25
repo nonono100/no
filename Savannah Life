@@ -1,0 +1,24 @@
+
+   
+--god mode
+game.ReplicatedStorage.PlayerDamageSelfRemoteEvent:FireServer(0/0)
+   while wait() do 
+pcall(function()
+-- kill nearest
+local closestPlayer, shortestDistance = nil, math.huge
+for _, player in ipairs(game.Players:GetPlayers()) do
+    if player ~= game.Players.LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+        local targetHRP = player.Character.HumanoidRootPart
+        local distance = (targetHRP.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+        if distance < shortestDistance then shortestDistance = distance closestPlayer = player end
+    end
+end
+local targetHumanoid = closestPlayer and closestPlayer.Character and closestPlayer.Character:FindFirstChild("Humanoid")
+if targetHumanoid then 
+    for i=1,10 do
+    game.ReplicatedStorage:WaitForChild("AttackHandlerRemoteEvent"):FireServer(targetHumanoid)
+game.ReplicatedStorage.SpecialAttackRemoteEvent_RegularAttack:FireServer(targetHumanoid)
+end
+    end
+end)
+    end
