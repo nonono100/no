@@ -1,0 +1,273 @@
+
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+
+	local function touch(x)
+	local root = game.Players.LocalPlayer.Character.HumanoidRootPart
+		x = x:FindFirstAncestorWhichIsA("Part")
+		if x then
+				task.spawn(function()
+					firetouchinterest(x, root, 1)
+					wait()
+					firetouchinterest(x, root, 0)
+				end)
+			end
+			x.CFrame = root.CFrame
+		end
+
+
+-- Create GUI
+local screenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+screenGui.Name = "AnimalMonitor"
+screenGui.ResetOnSpawn = false
+
+-- Main Frame
+local frame = Instance.new("Frame", screenGui)
+frame.Size = UDim2.new(0, 500, 0, 400)
+frame.Position = UDim2.new(0.5, -250, 0.5, -200)
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.BorderSizePixel = 0
+frame.Active = true
+frame.Draggable = true
+
+-- Close Button
+local closeBtn = Instance.new("TextButton", frame)
+closeBtn.Size = UDim2.new(0, 30, 0, 30)
+closeBtn.Position = UDim2.new(1, -35, 0, 5)
+closeBtn.Text = "X"
+closeBtn.BackgroundColor3 = Color3.fromRGB(100, 0, 0)
+closeBtn.TextColor3 = Color3.new(1, 1, 1)
+closeBtn.MouseButton1Click:Connect(function()
+    frame.Visible = false
+end)
+-- Tab Scroll Container
+local tabScroll = Instance.new("ScrollingFrame", frame)
+tabScroll.Size = UDim2.new(1, 0, 0, 40)
+tabScroll.Position = UDim2.new(0, 0, 0, 40)
+tabScroll.BackgroundTransparency = 1
+tabScroll.ScrollBarThickness = 6
+tabScroll.CanvasSize = UDim2.new(0, 0, 0, 40)
+tabScroll.AutomaticCanvasSize = Enum.AutomaticSize.X
+tabScroll.HorizontalScrollBarInset = Enum.ScrollBarInset.Always
+tabScroll.ScrollingDirection = Enum.ScrollingDirection.X
+
+-- Tab Holder inside scroll
+local tabHolder = Instance.new("Frame", tabScroll)
+tabHolder.Size = UDim2.new(0, 0, 1, 0)
+tabHolder.BackgroundTransparency = 1
+tabHolder.AutomaticSize = Enum.AutomaticSize.X
+tabHolder.Name = "TabHolder"
+
+local tabLayout = Instance.new("UIListLayout", tabHolder)
+tabLayout.FillDirection = Enum.FillDirection.Horizontal
+tabLayout.SortOrder = Enum.SortOrder.LayoutOrder
+tabLayout.Padding = UDim.new(0, 5)
+
+
+-- Scrollable container
+local scrollFrame = Instance.new("ScrollingFrame", frame)
+scrollFrame.Size = UDim2.new(1, 0, 1, -80)
+scrollFrame.Position = UDim2.new(0, 0, 0, 80)
+scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+scrollFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+scrollFrame.ScrollBarThickness = 8
+scrollFrame.BackgroundTransparency = 1
+
+-- Layouts
+local tabLayout = Instance.new("UIListLayout", tabHolder)
+tabLayout.FillDirection = Enum.FillDirection.Horizontal
+tabLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+local contentLayout = Instance.new("UIListLayout", scrollFrame)
+contentLayout.SortOrder = Enum.SortOrder.LayoutOrder
+contentLayout.Padding = UDim.new(0, 5)
+
+-- Refresh logic
+local function createAnimalButton(animalName, generation, genColor, rarityText, rarityColor, proximityPrompt, stolen)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1, -10, 0, 60)
+    btn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+    btn.Text = ""
+    btn.AutoButtonColor = false
+
+    local uiStroke = Instance.new("UIStroke", btn)
+    uiStroke.Color = Color3.new(1, 1, 1)
+    uiStroke.Thickness = 2
+
+    local rarity = Instance.new("TextLabel", btn)
+    rarity.Text = rarityText
+    rarity.TextColor3 = rarityColor
+    rarity.Font = Enum.Font.SourceSansBold
+    rarity.TextSize = 14
+    rarity.Position = UDim2.new(0, 5, 0, 0)
+    rarity.Size = UDim2.new(1, -10, 0, 20)
+    rarity.BackgroundTransparency = 1
+    rarity.TextXAlignment = Enum.TextXAlignment.Left
+
+    local nameLabel = Instance.new("TextLabel", btn)
+    nameLabel.Text = animalName
+    nameLabel.TextColor3 = Color3.new(1, 1, 1)
+    nameLabel.Font = Enum.Font.SourceSansBold
+    nameLabel.TextSize = 20
+    nameLabel.Position = UDim2.new(0, 0, 0, 20)
+    nameLabel.Size = UDim2.new(1, 0, 0, 20)
+    nameLabel.BackgroundTransparency = 1
+    nameLabel.TextYAlignment = Enum.TextYAlignment.Center
+
+    local genLabel = Instance.new("TextLabel", btn)
+    genLabel.Text = generation
+    genLabel.TextColor3 = genColor
+    genLabel.Font = Enum.Font.SourceSans
+    genLabel.TextSize = 14
+    genLabel.Position = UDim2.new(0, 0, 0, 40)
+    genLabel.Size = UDim2.new(1, 0, 0, 20)
+    genLabel.BackgroundTransparency = 1
+    genLabel.TextYAlignment = Enum.TextYAlignment.Top
+    local isFiring = false
+    local fireLoop = nil
+
+    btn.MouseButton1Click:Connect(function()
+        isFiring = not isFiring
+        btn.BackgroundColor3 = isFiring and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(80, 80, 80)
+        if isFiring then
+            spawn(function()
+            game.Players.LocalPlayer.Character.Humanoid.Health = 0
+local far = true
+spawn(function()
+wait(10)
+far = false
+end)
+while far == true do 
+wait()
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = proximityPrompt.Parent.Parent.CFrame--workspace:FindFirstChild(animalName).RootPart.CFrame
+end
+        end)
+            fireLoop = coroutine.create(function()
+                while isFiring and proximityPrompt and proximityPrompt.Parent do
+                    fireproximityprompt(proximityPrompt)
+                    task.wait(0.1) -- adjust firing rate here
+                    if stolen.Visible == true then 
+                    wait(3)    
+                    spawn(function()
+		            for _, descendant in ipairs(workspace:GetDescendants()) do
+			            if descendant:IsA("TouchTransmitter") then
+				            touch(descendant)
+			            end
+		            end
+                    end)
+                    end
+                end
+            end)
+            coroutine.resume(fireLoop)
+        end
+    end)
+
+    return btn
+end
+
+-- Active tab system
+local activeTab = nil
+local tabButtons = {}
+local function switchTab(plotId)
+    activeTab = plotId
+    for id, button in pairs(tabButtons) do
+        button.BackgroundColor3 = id == activeTab and Color3.fromRGB(100, 100, 100) or Color3.fromRGB(60, 60, 60)
+    end
+end
+
+-- Refresh function
+local function refreshUI()
+for _, child in pairs(scrollFrame:GetChildren()) do
+    if not child:IsA("UIListLayout") then
+        child:Destroy()
+    end
+end
+
+    for _, plot in pairs(workspace:WaitForChild("Plots"):GetChildren()) do
+        local plotId = plot.Name
+
+        -- Create tab if not exists
+        if not tabButtons[plotId] then
+            local tabBtn = Instance.new("TextButton", tabHolder)
+            tabBtn.Size = UDim2.new(0, 80, 1, 0)
+            local sign = plot:FindFirstChild("PlotSign")
+            local labelText = sign and sign:FindFirstChild("SurfaceGui") and sign.SurfaceGui:FindFirstChild("Frame") and sign.SurfaceGui.Frame:FindFirstChild("TextLabel") and sign.SurfaceGui.Frame.TextLabel.Text
+            local playerName = labelText and string.match(labelText, "^(.-)'s")
+if not playerName or string.match(playerName, "^%x%x%x%x%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%x%x%x%x%x%x%x%x%x$") then
+    tabBtn:Destroy()
+	continue
+end
+            tabBtn.Text = playerName
+            tabBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+            tabBtn.TextColor3 = Color3.new(1, 1, 1)
+            tabBtn.Font = Enum.Font.SourceSansBold
+            tabBtn.TextSize = 14
+            tabBtn.TextScaled = true
+
+            local timerLabel = Instance.new("TextLabel", tabBtn)
+timerLabel.Size = UDim2.new(1, 0, 0, 10)
+timerLabel.Position = UDim2.new(0, 0, 0, 0)
+timerLabel.BackgroundTransparency = 1
+timerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+timerLabel.TextScaled = true
+timerLabel.Font = Enum.Font.Fantasy
+timerLabel.Text = "69s"
+
+spawn(function()
+	while wait(0.3) do
+        local txt = workspace.Plots[plotId].Purchases.PlotBlock.Main.BillboardGui.RemainingTime.Text
+		timerLabel.Text = txt:gsub(".?$",""); 
+        timerLabel.Visible = (txt and txt ~= "")
+    
+	end
+end)
+
+            tabButtons[plotId] = tabBtn
+            tabBtn.MouseButton1Click:Connect(function()
+                switchTab(plotId)
+                refreshUI()
+            end)
+
+            -- Auto-select first tab
+            if not activeTab then
+                switchTab(plotId)
+            end
+        end
+
+        if plotId == activeTab then
+            local podiums = plot:FindFirstChild("AnimalPodiums")
+            if podiums then
+                for _, podium in pairs(podiums:GetChildren()) do
+                    local spawn = podium:FindFirstChild("Base") and podium.Base:FindFirstChild("Spawn")
+                    if spawn and spawn:FindFirstChild("PromptAttachment") and spawn.PromptAttachment:FindFirstChildOfClass("ProximityPrompt") then
+                        local att = spawn:FindFirstChild("Attachment")
+                        local overhead = att and att:FindFirstChild("AnimalOverhead")
+
+                        if overhead then
+                            local rarityVal = overhead:FindFirstChild("Rarity") and overhead.Rarity.Text
+                            local rarityText = rarityVal
+                            local rarityColor = overhead.Rarity.TextColor3 
+
+                            local nameVal = overhead:FindFirstChild("DisplayName")
+                            local genVal = overhead:FindFirstChild("Generation")
+                            local genText = genVal.Text or ""
+                            local genColor = overhead.Generation.TextColor3
+                            local prompt = spawn.PromptAttachment:FindFirstChildOfClass("ProximityPrompt")
+                            local stolen = overhead.Stolen
+                            local animalBtn = createAnimalButton(nameVal and nameVal.Text or "Unknown", genText, genColor, rarityText, rarityColor, prompt, stolen)
+                            animalBtn.Parent = scrollFrame
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+
+while true do
+    refreshUI()
+    task.wait(500)
+end
