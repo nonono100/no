@@ -268,8 +268,9 @@ end)
         end
     end
 end
-
+spawn(function()
 while true do
     refreshUI()
     task.wait(500)
 end
+end)
