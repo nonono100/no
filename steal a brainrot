@@ -1,5 +1,4 @@
 
-
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local RunService = game:GetService("RunService")
@@ -147,8 +146,9 @@ end
         end)
             fireLoop = coroutine.create(function()
                 while isFiring and proximityPrompt and proximityPrompt.Parent do
-                    fireproximityprompt(proximityPrompt)
                     task.wait(0.1) -- adjust firing rate here
+                    if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") and game.Players.LocalPlayer.Character.Humanoid.Health ~= 0 then 
+                    fireproximityprompt(proximityPrompt)
                     if stolen.Visible == true then 
                     wait(3)    
                     spawn(function()
@@ -159,6 +159,7 @@ end
 		            end
                     end)
                     end
+                end
                 end
             end)
             coroutine.resume(fireLoop)
@@ -218,11 +219,12 @@ timerLabel.Text = "69s"
 
 spawn(function()
 	while wait(0.3) do
+        if workspace.Plots[plotId]:FindFirstChild('Purchases') then
         local txt = workspace.Plots[plotId].Purchases.PlotBlock.Main.BillboardGui.RemainingTime.Text
 		timerLabel.Text = txt:gsub(".?$",""); 
         timerLabel.Visible = (txt and txt ~= "")
-    
-	end
+        end
+        end
 end)
 
             tabButtons[plotId] = tabBtn
