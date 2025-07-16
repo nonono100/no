@@ -1,0 +1,305 @@
+
+
+
+local Players = game:GetService("Players")
+local CollectionService = game:GetService("CollectionService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local function getHRP()
+    local char = player.Character or player.CharacterAdded:Wait()
+    return char:WaitForChild("HumanoidRootPart")
+end
+
+local hrp = getHRP()
+
+local requestGrab = ReplicatedStorage.RemoteEvents.RequestStartDraggingItem
+local stopGrab = ReplicatedStorage.RemoteEvents.StopDraggingItem
+
+local MAX_DISTANCE = 25
+local HOLD_TIME = 0.1
+local isclosed = false
+
+
+spawn(function()
+while wait(1) do 
+	if isclosed == false then 
+for i,v in pairs(workspace.Items:GetChildren()) do 
+if string.lower(v.Name):find("chest") then 
+for i,b in pairs(v:GetDescendants()) do 
+if b:IsA("ProximityPrompt") then 
+fireproximityprompt(b)
+              end
+            end
+          end
+		  if v.Name == "Coin Stack" then 
+game:GetService("ReplicatedStorage").RemoteEvents.RequestCollectCoints:InvokeServer(v)
+		  end
+        end
+      end
+	end
+    end)
+
+-- === UI SETUP ===
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "ItemGrabberUI"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 200, 0, 350)
+frame.Position = UDim2.new(0.5, -100, 0.5, -175)
+frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+frame.BorderSizePixel = 0
+frame.Draggable = true
+frame.Active = true
+frame.Parent = screenGui
+
+Instance.new("UICorner", frame)
+
+local function createButton(text, yPos, color, callback)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1, -20, 0, 25)
+    btn.Position = UDim2.new(0, 10, 0, yPos)
+    btn.Text = text
+    btn.BackgroundColor3 = color
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    btn.Parent = frame
+    Instance.new("UICorner", btn)
+    btn.MouseButton1Click:Connect(callback)
+    return yPos + 30
+end
+
+-- === CLOSE BUTTON ===
+local closeButton = Instance.new("TextButton")
+closeButton.Size = UDim2.new(0, 25, 0, 25)
+closeButton.Position = UDim2.new(1, -30, 0, 0)
+closeButton.Text = "X"
+closeButton.BackgroundColor3 = Color3.fromRGB(170, 50, 50)
+closeButton.TextColor3 = Color3.new(1,1,1)
+closeButton.Parent = frame
+Instance.new("UICorner", closeButton)
+closeButton.MouseButton1Click:Connect(function()
+	frame.Visible = false
+	isclosed = true
+end)
+
+-- === FUNCTIONS ===
+local function grabNearby()
+	local handled = {}
+	while true do
+		local nearestItem = nil
+		local nearestDist = MAX_DISTANCE
+		for _, item in ipairs(Workspace.Items:GetChildren()) do
+			if not handled[item] 
+				and item.Name ~= "Carrot" 
+				and item.Name ~= "Berry"
+				and not CollectionService:HasTag(item, "GrabbedItem") then
+
+				local part = item:FindFirstChildWhichIsA("BasePart")
+				if part then
+					local dist = (hrp.Position - part.Position).Magnitude
+					if dist < nearestDist then
+						nearestItem = item
+						nearestDist = dist
+					end
+				end
+			end
+		end
+		if not nearestItem then break end
+		requestGrab:FireServer(nearestItem)
+		task.wait(HOLD_TIME)
+		stopGrab:FireServer(nearestItem)
+
+		CollectionService:AddTag(nearestItem, "GrabbedItem") -- ✅ Add tag after grabbing
+		handled[nearestItem] = true
+		task.wait(0.2)
+	end
+				game:GetService("StarterGui"):SetCore("SendNotification",{
+				Title = "Grabbing Done",
+				Text = "", 
+				Icon = "rbxassetid://7797779394",
+				Duration = 0.25
+			})
+end
+
+local function bringAllItems()
+	for _, item in ipairs(Workspace.Items:GetChildren()) do
+		if not CollectionService:HasTag(item, "GrabbedItem") and item.Name ~= "Berry" and item.Name ~= "Carrot" and item.Name ~= "Bolt" and item.Name ~= "Sheet Metal" and item.Name ~= "Log" and item.Name ~= "Sapling" and item.Name ~= "Chilli" then
+			local part = item:FindFirstChildWhichIsA("BasePart")
+			if part then
+				local offset = Vector3.new(math.random(-3,3), 2, math.random(-3,3))
+				part.CFrame = hrp.CFrame + offset
+			end
+		end
+	end
+end
+
+local function grabAllChildren()
+	for _, model in ipairs(Workspace.Characters:GetChildren()) do
+		if string.lower(model.Name):find("child") then
+			local part = model:FindFirstChildWhichIsA("BasePart", true)
+			if part then
+				part.CFrame = hrp.CFrame
+			end
+		end
+	end
+end
+
+local categories = {
+	Fuel = {"Coal", "Fuel Canister", "Oil Barrel"},
+	Scrap = {"Tyre", "Sheet Metal", "Old Radio", "Broken Fan", "Broken Microwave", "Old Car Engine", "Washing Machine"},
+	Logs = {"Log", "Chair"},
+	Saplings = {"Sapling"},
+}
+
+local allCategoryNames = {}
+for _, list in pairs(categories) do
+	for _, name in ipairs(list) do
+		allCategoryNames[name] = true
+	end
+end
+
+local function teleportCategoryItems(categoryList)
+	for _, item in ipairs(Workspace.Items:GetChildren()) do
+		if table.find(categoryList, item.Name) then
+			local part = item:FindFirstChildWhichIsA("BasePart")
+			if part then
+				local offset = Vector3.new(math.random(-3,3), 2, math.random(-3,3))
+				part.CFrame = hrp.CFrame + offset
+			end
+		end
+	end
+end
+
+local function teleportMiscItems()
+	for _, item in ipairs(Workspace.Items:GetChildren()) do
+		if not allCategoryNames[item.Name] and item.Name ~= "Berry" and item.Name ~= "Carrot" then
+			local part = item:FindFirstChildWhichIsA("BasePart")
+			if part then
+				local offset = Vector3.new(math.random(-3,3), 2, math.random(-3,3))
+				part.CFrame = hrp.CFrame + offset
+			end
+		end
+	end
+end
+
+-- === ADD BUTTONS ===
+local baseColor = 50
+local yPos = 35
+local function gradientColor(step)
+	local value = baseColor + step * 10
+	return Color3.fromRGB(value, value, value)
+end
+
+local step = 0
+
+yPos = createButton("Grab & Drop Nearby Items", yPos, gradientColor(step), grabNearby) step += 1
+yPos = createButton("Bring All Items To You", yPos, gradientColor(step), bringAllItems) step += 1
+yPos = createButton("Grab All Children", yPos, gradientColor(step), grabAllChildren) step += 1
+yPos = createButton("Grab All Fuel", yPos, gradientColor(step), function() teleportCategoryItems(categories.Fuel) end) step += 1
+yPos = createButton("Grab All Scrap", yPos, gradientColor(step), function() teleportCategoryItems(categories.Scrap) end) step += 1
+yPos = createButton("Grab All Logs", yPos, gradientColor(step), function() teleportCategoryItems(categories.Logs) end) step += 1
+yPos = createButton("Grab All Saplings", yPos, gradientColor(step), function() teleportCategoryItems(categories.Saplings) end) step += 1
+yPos = createButton("Grab All Misc", yPos, gradientColor(step), teleportMiscItems)
+-- === CUSTOM ITEM TELEPORT UI ===
+-- Move textbox up slightly to avoid clashing with bottom buttons
+yPos = yPos
+
+-- Text input for filtering item names
+local textbox = Instance.new("TextBox")
+textbox.Size = UDim2.new(1, -20, 0, 25)
+textbox.Position = UDim2.new(0, 10, 0, yPos)
+textbox.PlaceholderText = "Type item name..."
+textbox.BackgroundColor3 = gradientColor(step)
+textbox.TextColor3 = Color3.new(1, 1, 1)
+textbox.ClearTextOnFocus = false
+textbox.Parent = frame
+textbox.Text = ""
+Instance.new("UICorner", textbox)
+yPos += 30
+step += 1
+
+-- Scrolling dropdown (above the final button space)
+local dropdown = Instance.new("ScrollingFrame")
+dropdown.Size = UDim2.new(1, -20, 0, 100)
+dropdown.Position = UDim2.new(0, 10, 0, yPos)
+dropdown.BackgroundColor3 = gradientColor(step)
+dropdown.BorderSizePixel = 0
+dropdown.Visible = false
+dropdown.ClipsDescendants = true
+dropdown.ScrollBarThickness = 6
+dropdown.CanvasSize = UDim2.new(0, 0, 0, 0)
+dropdown.AutomaticCanvasSize = Enum.AutomaticSize.Y
+dropdown.ScrollingDirection = Enum.ScrollingDirection.Y
+dropdown.Parent = frame
+Instance.new("UICorner", dropdown)
+
+local dropdownListLayout = Instance.new("UIListLayout")
+dropdownListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+dropdownListLayout.Padding = UDim.new(0, 2)
+dropdownListLayout.Parent = dropdown
+
+-- Helper: brings all items with exact name
+local function bringAllItemsWithName(name)
+	for _, item in ipairs(Workspace.Items:GetChildren()) do
+		if item.Name == name then
+			local part = item:FindFirstChildWhichIsA("BasePart")
+			if part then
+				local offset = Vector3.new(math.random(-3,3), 2, math.random(-3,3))
+				part.CFrame = getHRP().CFrame + offset
+			end
+		end
+	end
+
+	game:GetService("StarterGui"):SetCore("SendNotification", {
+		Title = "Items Brought",
+		Text = name .. " xAll",
+		Icon = "rbxassetid://7797779394",
+		Duration = 1
+	})
+end
+
+-- Update suggestions (deduplicated)
+local function updateDropdownSuggestions(filter)
+	-- Clear old buttons (keep layout)
+	for _, child in ipairs(dropdown:GetChildren()) do
+		if child:IsA("TextButton") then
+			child:Destroy()
+		end
+	end
+
+	local seen = {}
+	for _, item in ipairs(Workspace.Items:GetChildren()) do
+		if string.lower(item.Name):find(string.lower(filter)) and not seen[item.Name] then
+			seen[item.Name] = true
+
+			local btn = Instance.new("TextButton")
+			btn.Text = item.Name
+			btn.Size = UDim2.new(1, 0, 0, 20)
+			btn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+			btn.TextColor3 = Color3.new(1, 1, 1)
+			btn.Parent = dropdown
+			btn.MouseButton1Click:Connect(function()
+				textbox.Text = item.Name
+				dropdown.Visible = false
+				bringAllItemsWithName(item.Name)
+			end)
+		end
+	end
+
+	dropdown.Visible = next(seen) ~= nil
+end
+
+-- Trigger suggestions as user types
+textbox:GetPropertyChangedSignal("Text"):Connect(function()
+	if textbox.Text ~= "" then
+		updateDropdownSuggestions(textbox.Text)
+	else
+		dropdown.Visible = false
+	end
+end)
+
+
