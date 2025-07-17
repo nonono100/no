@@ -1,6 +1,5 @@
 
 
-
 local Players = game:GetService("Players")
 local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -85,6 +84,76 @@ closeButton.MouseButton1Click:Connect(function()
 	frame.Visible = false
 	isclosed = true
 end)
+-- === TOP LEFT CONTROL BUTTONS ===
+local transportToInventory = false  -- false = bring to self, true = to sack
+
+-- Notification helper
+local function notify(title, text)
+	game:GetService("StarterGui"):SetCore("SendNotification", {
+		Title = title,
+		Text = text,
+		Icon = "rbxassetid://7797779394",
+		Duration = 1
+	})
+end
+
+-- === TOP LEFT CONTROL BUTTONS (REVISED) ===
+local transportToInventory = false  -- false = bring to you, true = to sack
+
+local function notify(title, text)
+	game:GetService("StarterGui"):SetCore("SendNotification", {
+		Title = title,
+		Text = text,
+		Icon = "rbxassetid://7797779394",
+		Duration = 1
+	})
+end
+
+-- Create top-left container that stays on screen
+local controlFrame = Instance.new("Frame")
+controlFrame.Size = UDim2.new(0, 60, 0, 30)
+controlFrame.Position = UDim2.new(0, 10, 0, 10)
+controlFrame.BackgroundTransparency = 1
+controlFrame.ZIndex = 1000
+controlFrame.Name = "ControlFrame"
+controlFrame.Parent = frame
+
+-- Sack Toggle Button
+local sackButton = Instance.new("ImageButton")
+sackButton.Size = UDim2.new(0, 22, 0, 22)
+sackButton.Position = UDim2.new(0, 0, 0, 0)
+sackButton.Image = "http://www.roblox.com/asset/?id=3168534010"
+sackButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+sackButton.ImageColor3 = Color3.new(1, 1, 1)
+sackButton.BackgroundTransparency = 0
+sackButton.ZIndex = 1001
+sackButton.Name = "SackToggle"
+sackButton.Parent = controlFrame
+
+
+-- Sack Finder Utility
+local function getPlayerSack()
+	for name, item in pairs(player.Inventory:GetChildren()) do
+		if string.lower(item.Name):find("sack") then
+			return item
+		end
+	end
+	return nil
+end
+
+
+-- Toggle sack transport behavior
+sackButton.MouseButton1Click:Connect(function()
+	transportToInventory = not transportToInventory
+	if transportToInventory then
+		sackButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0) -- green toggle
+		notify("Mode: Send to Sack", "Items will now go to your sack.")
+	else
+		sackButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		notify("Mode: Bring to You", "Items will now be brought to you.")
+	end
+end)
+
 
 -- === FUNCTIONS ===
 local function grabNearby()
@@ -126,23 +195,35 @@ local function grabNearby()
 end
 
 local function bringAllItems()
+local sack = getPlayerSack()
 	for _, item in ipairs(Workspace.Items:GetChildren()) do
 		if not CollectionService:HasTag(item, "GrabbedItem") and item.Name ~= "Berry" and item.Name ~= "Carrot" and item.Name ~= "Bolt" and item.Name ~= "Sheet Metal" and item.Name ~= "Log" and item.Name ~= "Sapling" and item.Name ~= "Chilli" then
 			local part = item:FindFirstChildWhichIsA("BasePart")
 			if part then
-				local offset = Vector3.new(math.random(-3,3), 2, math.random(-3,3))
-				part.CFrame = hrp.CFrame + offset
+				if transportToInventory and sack then
+	game:GetService("ReplicatedStorage").RemoteEvents.RequestBagStoreItem:InvokeServer(sack, item)
+else
+	local offset = Vector3.new(math.random(-3,3), 2, math.random(-3,3))
+	part.CFrame = hrp.CFrame + offset
+end
+
 			end
 		end
 	end
 end
 
 local function grabAllChildren()
+local sack = getPlayerSack()
 	for _, model in ipairs(Workspace.Characters:GetChildren()) do
 		if string.lower(model.Name):find("child") then
 			local part = model:FindFirstChildWhichIsA("BasePart", true)
 			if part then
-				part.CFrame = hrp.CFrame
+				if transportToInventory and sack then
+	game:GetService("ReplicatedStorage").RemoteEvents.RequestBagStoreItem:InvokeServer(sack, item)
+else
+	local offset = Vector3.new(math.random(-3,3), 2, math.random(-3,3))
+	part.CFrame = hrp.CFrame + offset
+end
 			end
 		end
 	end
@@ -163,24 +244,36 @@ for _, list in pairs(categories) do
 end
 
 local function teleportCategoryItems(categoryList)
+local sack = getPlayerSack()
 	for _, item in ipairs(Workspace.Items:GetChildren()) do
 		if table.find(categoryList, item.Name) then
 			local part = item:FindFirstChildWhichIsA("BasePart")
 			if part then
-				local offset = Vector3.new(math.random(-3,3), 2, math.random(-3,3))
-				part.CFrame = hrp.CFrame + offset
+				if transportToInventory and sack then
+	game:GetService("ReplicatedStorage").RemoteEvents.RequestBagStoreItem:InvokeServer(sack, item)
+else
+	local offset = Vector3.new(math.random(-3,3), 2, math.random(-3,3))
+	part.CFrame = hrp.CFrame + offset
+end
+
 			end
 		end
 	end
 end
 
 local function teleportMiscItems()
+local sack = getPlayerSack()
 	for _, item in ipairs(Workspace.Items:GetChildren()) do
 		if not allCategoryNames[item.Name] and item.Name ~= "Berry" and item.Name ~= "Carrot" then
 			local part = item:FindFirstChildWhichIsA("BasePart")
 			if part then
-				local offset = Vector3.new(math.random(-3,3), 2, math.random(-3,3))
-				part.CFrame = hrp.CFrame + offset
+				if transportToInventory and sack then
+	game:GetService("ReplicatedStorage").RemoteEvents.RequestBagStoreItem:InvokeServer(sack, item)
+else
+	local offset = Vector3.new(math.random(-3,3), 2, math.random(-3,3))
+	part.CFrame = hrp.CFrame + offset
+end
+
 			end
 		end
 	end
@@ -243,24 +336,26 @@ dropdownListLayout.Padding = UDim.new(0, 2)
 dropdownListLayout.Parent = dropdown
 
 -- Helper: brings all items with exact name
+-- Helper: brings all items with exact name
 local function bringAllItemsWithName(name)
+	local sack = getPlayerSack()
 	for _, item in ipairs(Workspace.Items:GetChildren()) do
 		if item.Name == name then
 			local part = item:FindFirstChildWhichIsA("BasePart")
 			if part then
-				local offset = Vector3.new(math.random(-3,3), 2, math.random(-3,3))
-				part.CFrame = getHRP().CFrame + offset
+				if transportToInventory and sack then
+					game:GetService("ReplicatedStorage").RemoteEvents.RequestBagStoreItem:InvokeServer(sack, item)
+				else
+					local offset = Vector3.new(math.random(-3,3), 2, math.random(-3,3))
+					part.CFrame = getHRP().CFrame + offset
+				end
 			end
 		end
 	end
 
-	game:GetService("StarterGui"):SetCore("SendNotification", {
-		Title = "Items Brought",
-		Text = name .. " xAll",
-		Icon = "rbxassetid://7797779394",
-		Duration = 1
-	})
+	notify("Items Moved", name .. (transportToInventory and " sent to sack" or " brought to you"))
 end
+
 
 -- Update suggestions (deduplicated)
 local function updateDropdownSuggestions(filter)
