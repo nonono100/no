@@ -36,11 +36,16 @@ fireproximityprompt(b)
 		  if v.Name == "Coin Stack" then 
 game:GetService("ReplicatedStorage").RemoteEvents.RequestCollectCoints:InvokeServer(v)
 		  end
+if v.Name == "Diamond" then 
+game:GetService("ReplicatedStorage").RemoteEvents.RequestTakeDiamonds:FireServer(v)
+end
         end
       end
 	end
     end)
-
+spawn(function()
+game:GetService("ReplicatedStorage").RemoteEvents.DamagePlayer:FireServer(-9999999)
+end)
 -- === UI SETUP ===
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "ItemGrabberUI"
