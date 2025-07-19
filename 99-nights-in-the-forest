@@ -44,7 +44,13 @@ end
 	end
     end)
 spawn(function()
+while wait(1) do 
+pcall(function()
+if game.Players.LocalPlayer.Character.Humanoid.Health <= 1000 then 
 game:GetService("ReplicatedStorage").RemoteEvents.DamagePlayer:FireServer(-9999999)
+end
+end)
+end
 end)
 -- === UI SETUP ===
 local screenGui = Instance.new("ScreenGui")
@@ -236,7 +242,7 @@ end
 
 local categories = {
 	Fuel = {"Coal", "Fuel Canister", "Oil Barrel"},
-	Scrap = {"Tyre", "Sheet Metal", "Old Radio", "Broken Fan", "Broken Microwave", "Old Car Engine", "Washing Machine"},
+	Scrap = {"Tyre", "Sheet Metal", "Old Radio", "Broken Fan", "Broken Microwave", "Old Car Engine", "Washing Machine", "UFO Component", "UFO Junk", "Metal Chair"},
 	Logs = {"Log", "Chair"},
 	Saplings = {"Sapling"},
 }
@@ -269,7 +275,7 @@ end
 local function teleportMiscItems()
 local sack = getPlayerSack()
 	for _, item in ipairs(Workspace.Items:GetChildren()) do
-		if not allCategoryNames[item.Name] and item.Name ~= "Berry" and item.Name ~= "Carrot" then
+		if not allCategoryNames[item.Name] and item.Name ~= "Berry" and item.Name ~= "Leather Body" and item.Name ~= "Carrot" then
 			local part = item:FindFirstChildWhichIsA("BasePart")
 			if part then
 				if transportToInventory and sack then
@@ -401,5 +407,3 @@ textbox:GetPropertyChangedSignal("Text"):Connect(function()
 		dropdown.Visible = false
 	end
 end)
-
-
